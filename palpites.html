@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palpites — Bolão Shuriks</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#FF2E9A;--gold-dark:#C01878;
+  --bg:#0a0c10;--bg2:#12151c;--bg3:#1a1e28;--bg4:#222738;
+  --border:rgba(255,46,154,0.18);--border-strong:rgba(255,46,154,0.4);
+  --text:#f0f0f0;--text-muted:#8892a4;--text-dim:#555f72;--green:#22c55e;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+
+.site-header{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-inner{max-width:880px;margin:0 auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.hero-logo{width:100px;height:100px;border-radius:50%;object-fit:cover;margin:0 auto 14px;display:block;filter:drop-shadow(0 0 26px rgba(255,46,154,.4))}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:1.5px;color:var(--gold)}
+nav{display:flex;gap:4px}
+nav a{color:var(--text-muted);text-decoration:none;font-size:12px;font-weight:500;padding:6px 11px;border-radius:6px;text-transform:uppercase;letter-spacing:.5px}
+nav a:hover,nav a.active{color:var(--gold);background:rgba(255,46,154,0.08)}
+nav a.nav-bolao{border:1px solid var(--border);color:var(--gold)}
+
+.hero{background:var(--bg2);border-bottom:1px solid var(--border);padding:28px 20px;text-align:center}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,6vw,54px);letter-spacing:3px;color:var(--gold)}
+.hero-sub{font-size:13px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+
+.main{max-width:820px;margin:0 auto;padding:28px 18px 60px}
+.busca{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-size:15px;outline:none;margin-bottom:22px}
+.busca:focus{border-color:var(--border-strong)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:28px}
+.pcard{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s}
+.pcard:hover{border-color:var(--border-strong);background:var(--bg4)}
+.pcard.sel{border-color:var(--gold);background:rgba(255,46,154,.08)}
+.av{width:36px;height:36px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;color:var(--gold);font-size:13px;overflow:hidden;flex-shrink:0}
+.av img{width:100%;height:100%;object-fit:cover}
+.pcard-nome{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcard-pts{font-size:11px;color:var(--gold);margin-top:2px}
+
+.detalhe{display:none}
+.detalhe.open{display:block}
+.det-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.det-av{width:48px;height:48px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;color:var(--gold);font-size:16px;overflow:hidden}
+.det-av img{width:100%;height:100%;object-fit:cover}
+.det-nome{font-family:'Oswald',sans-serif;font-size:20px;font-weight:600}
+.det-pts{font-size:13px;color:var(--gold)}
+.pl-row{display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:8px}
+.pl-time{font-size:13px;display:flex;align-items:center;gap:6px;min-width:0}
+.pl-time.r{flex-direction:row-reverse;text-align:right}
+.pl-time img{width:20px;height:auto;border-radius:2px;flex-shrink:0}
+.pl-time span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-placar{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);white-space:nowrap}
+.pl-pts{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--bg4);color:var(--text-muted);min-width:42px;text-align:center}
+.pl-pts.ganhou{background:rgba(34,197,94,.15);color:var(--green)}
+.empty{text-align:center;color:var(--text-muted);padding:24px;font-size:14px}
+.loading{text-align:center;padding:50px;color:var(--text-muted)}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-size:12px;color:var(--text-dim)}
+.voltar{display:inline-block;margin-bottom:16px;color:var(--text-muted);font-size:13px;cursor:pointer;text-decoration:none}
+.voltar:hover{color:var(--gold)}
+@media(max-width:520px){.nav-opt{display:none}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="palpites.html"><img class="logo-img" src="shuriks-logo.png" alt="Shuriks"><div class="logo-text" id="logo-text">Bolão Shuriks</div></a>
+    <nav>
+      <a href="home.html" class="nav-opt">Classificação</a>
+      <a href="index.html" class="nav-bolao">⚽ Bolão</a>
+      <a href="palpites.html" class="active">🎯 Palpites</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <img class="hero-logo" src="shuriks-logo.png" alt="Shuriks">
+  <div class="hero-title">Palpites</div>
+  <div class="hero-sub">Veja o que cada um chutou</div>
+</section>
+
+<div class="main">
+  <div id="loading" class="loading"><div class="spinner"></div>Carregando...</div>
+
+  <div id="lista-area" style="display:none">
+    <input class="busca" id="busca" placeholder="🔍 Buscar participante..." oninput="filtrar()">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div id="detalhe" class="detalhe">
+    <a class="voltar" onclick="voltar()">← Voltar pra lista</a>
+    <div class="det-head">
+      <div class="det-av" id="det-av">?</div>
+      <div><div class="det-nome" id="det-nome">—</div><div class="det-pts" id="det-pts"></div></div>
+    </div>
+    <div id="det-palpites"></div>
+  </div>
+</div>
+
+<footer>Bolão da Copa 2026 · <strong style="color:var(--gold)">feito com Claude</strong></footer>
+
+<script>
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyr5fXwBeGQKntrZv4L6WjkCSCYG5d3rlIrV85_i_wO_VZpb-SVhRmub7aVYCj0KPMDtA/exec';
+const FLAGS = {
+  'México':'mx','África do Sul':'za','Coreia do Sul':'kr','Canadá':'ca','Estados Unidos':'us',
+  'Paraguai':'py','Austrália':'au','Catar':'qa','Suíça':'ch','Brasil':'br','Marrocos':'ma',
+  'Haiti':'ht','Escócia':'gb-sct','Alemanha':'de','Curaçao':'cw','Holanda':'nl','Japão':'jp',
+  'Costa do Marfim':'ci','Equador':'ec','Tunísia':'tn','Espanha':'es','Cabo Verde':'cv',
+  'Bélgica':'be','Egito':'eg','Arábia Saudita':'sa','Uruguai':'uy','Irã':'ir','Nova Zelândia':'nz',
+  'Argentina':'ar','Argélia':'dz','França':'fr','Senegal':'sn','Noruega':'no','Áustria':'at',
+  'Jordânia':'jo','Portugal':'pt','Inglaterra':'gb-eng','Croácia':'hr','Gana':'gh','Panamá':'pa',
+  'Uzbequistão':'uz','Colômbia':'co','Itália':'it','Iraque':'iq','Dinamarca':'dk','Suécia':'se',
+  'Polônia':'pl','Tchéquia':'cz','Bósnia e Herzegovina':'ba','Turquia':'tr','Bolívia':'bo','Nova Caledônia':'nc','Jamaica':'jm','RD Congo':'cd',
+};
+function flag(t){const c=FLAGS[(t||'').trim()];return c?`<img src="https://flagcdn.com/w40/${c}.png">`:'🏳️';}
+function initials(n){const p=n.trim().split(' ');return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
+function primeiroUltimo(n){const p=n.trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
+
+let PARTICIPANTES=[], JOGOS=[], PALPITES=[];
+
+async function carregar(){
+  try{
+    const res = await fetch(SHEETS_URL);
+    const d = await res.json();
+    PARTICIPANTES = (d.participantes||[]).slice().sort((a,b)=>b.pontos-a.pontos);
+    JOGOS = d.jogos||[];
+    PALPITES = d.palpites||[];
+    if (d.config && d.config.titulo) document.getElementById('logo-text').textContent = d.config.titulo;
+    document.getElementById('loading').style.display='none';
+    document.getElementById('lista-area').style.display='block';
+    render(PARTICIPANTES);
+  }catch(e){
+    document.getElementById('loading').innerHTML='<p style="color:var(--text-muted)">Erro ao carregar. Recarregue.</p>';
+  }
+}
+
+function render(lista){
+  document.getElementById('grid').innerHTML = lista.map(p=>{
+    const av = p.foto?`<img src="${p.foto}">`:initials(p.nome);
+    return `<div class="pcard" onclick="ver('${p.nome.replace(/'/g,"\\'")}')">
+      <div class="av">${av}</div>
+      <div style="min-width:0"><div class="pcard-nome">${primeiroUltimo(p.nome)}</div><div class="pcard-pts">${p.pontos} pts</div></div>
+    </div>`;
+  }).join('') || '<div class="empty">Ninguém cadastrado ainda.</div>';
+}
+
+function filtrar(){
+  const q = document.getElementById('busca').value.toLowerCase();
+  render(PARTICIPANTES.filter(p=>p.nome.toLowerCase().includes(q)));
+}
+
+function ver(nome){
+  const p = PARTICIPANTES.find(x=>x.nome===nome);
+  if (!p) return;
+  document.getElementById('lista-area').style.display='none';
+  document.getElementById('detalhe').classList.add('open');
+  document.getElementById('det-av').innerHTML = p.foto?`<img src="${p.foto}">`:initials(p.nome);
+  document.getElementById('det-nome').textContent = p.nome;
+  document.getElementById('det-pts').textContent = p.pontos+' pontos no total';
+
+  const meus = PALPITES.filter(x=>x.nome.toLowerCase()===nome.toLowerCase());
+  const jogoPorNum={}; JOGOS.forEach(j=>jogoPorNum[String(j.num)]=j);
+
+  document.getElementById('det-palpites').innerHTML = meus.length ? meus.map(pl=>{
+    const j = jogoPorNum[String(pl.jogo)] || {time1:'?',time2:'?'};
+    const ganhou = pl.pontos>0;
+    return `<div class="pl-row">
+      <div class="pl-time">${flag(j.time1)}<span>${j.time1}</span></div>
+      <div class="pl-placar">${pl.gol1} × ${pl.gol2}</div>
+      <div class="pl-time r">${flag(j.time2)}<span>${j.time2}</span></div>
+      <div class="pl-pts ${ganhou?'ganhou':''}">${pl.pontos>0?'+'+pl.pontos:(j.status==='encerrado'?'0':'—')}</div>
+    </div>`;
+  }).join('') : '<div class="empty">Ainda não palpitou em nenhum jogo.</div>';
+}
+
+function voltar(){
+  document.getElementById('detalhe').classList.remove('open');
+  document.getElementById('lista-area').style.display='block';
+}
+
+if (SHEETS_URL.startsWith('COLE_AQUI')){
+  document.getElementById('loading').innerHTML='<p style="color:var(--text-muted)">Falta configurar a URL do script no código.</p>';
+} else {
+  carregar();
+  setInterval(carregar, 60000);
+}
+</script>
+</body>
+</html>
