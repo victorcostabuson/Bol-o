@@ -7,45 +7,44 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --gold:#FF2E9A;--gold-dark:#C01878;
+  --gold:#FF2E9A;--gold-light:#FF6FC0;--gold-dark:#C01878;
   --bg:#0a0c10;--bg2:#12151c;--bg3:#1a1e28;--bg4:#222738;
   --border:rgba(255,46,154,0.18);--border-strong:rgba(255,46,154,0.4);
   --text:#f0f0f0;--text-muted:#8892a4;--text-dim:#555f72;--green:#22c55e;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
-
 .site-header{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.header-inner{max-width:880px;margin:0 auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between;height:60px}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
-.logo-img{width:40px;height:40px;border-radius:50%;object-fit:cover}
-.hero-logo{width:100px;height:100px;border-radius:50%;object-fit:cover;margin:0 auto 14px;display:block;filter:drop-shadow(0 0 26px rgba(255,46,154,.4))}
-.logo-text{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:1.5px;color:var(--gold)}
-nav{display:flex;gap:4px}
-nav a{color:var(--text-muted);text-decoration:none;font-size:12px;font-weight:500;padding:6px 11px;border-radius:6px;text-transform:uppercase;letter-spacing:.5px}
+.header-inner{max-width:880px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:58px}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo-img{width:38px;height:38px;border-radius:50%;object-fit:cover}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--gold)}
+nav{display:flex;gap:2px}
+nav a{color:var(--text-muted);text-decoration:none;font-size:11px;font-weight:600;padding:6px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:.5px}
 nav a:hover,nav a.active{color:var(--gold);background:rgba(255,46,154,0.08)}
 nav a.nav-bolao{border:1px solid var(--border);color:var(--gold)}
+.hero{background:var(--bg2);border-bottom:1px solid var(--border);padding:24px 20px;text-align:center}
+.hero-logo{width:78px;height:78px;border-radius:50%;object-fit:cover;margin:0 auto 8px;display:block;filter:drop-shadow(0 0 24px rgba(255,46,154,.4))}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,6vw,52px);letter-spacing:3px;color:var(--gold)}
+.hero-sub{font-size:12px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+.main{max-width:820px;margin:0 auto;padding:24px 16px 60px}
 
-.hero{background:var(--bg2);border-bottom:1px solid var(--border);padding:28px 20px;text-align:center}
-.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,6vw,54px);letter-spacing:3px;color:var(--gold)}
-.hero-sub{font-size:13px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+.tabs{display:flex;gap:8px;margin-bottom:20px}
+.tab{flex:1;text-align:center;padding:11px;border-radius:10px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;cursor:pointer;background:var(--bg3);color:var(--text-muted);border:1px solid transparent}
+.tab.active{background:rgba(255,46,154,0.1);color:var(--gold);border-color:var(--border-strong)}
 
-.main{max-width:820px;margin:0 auto;padding:28px 18px 60px}
-.busca{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-size:15px;outline:none;margin-bottom:22px}
-.busca:focus{border-color:var(--border-strong)}
+.busca,.sel{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 15px;color:var(--text);font-size:15px;outline:none;margin-bottom:18px;font-family:'Inter',sans-serif}
+.busca:focus,.sel:focus{border-color:var(--border-strong)}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:28px}
-.pcard{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.pcard{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px}
 .pcard:hover{border-color:var(--border-strong);background:var(--bg4)}
-.pcard.sel{border-color:var(--gold);background:rgba(255,46,154,.08)}
 .av{width:36px;height:36px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;color:var(--gold);font-size:13px;overflow:hidden;flex-shrink:0}
 .av img{width:100%;height:100%;object-fit:cover}
 .pcard-nome{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pcard-pts{font-size:11px;color:var(--gold);margin-top:2px}
 
-.detalhe{display:none}
-.detalhe.open{display:block}
+.detalhe{display:none}.detalhe.open{display:block}
 .det-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .det-av{width:48px;height:48px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;color:var(--gold);font-size:16px;overflow:hidden}
 .det-av img{width:100%;height:100%;object-fit:cover}
@@ -59,29 +58,46 @@ nav a.nav-bolao{border:1px solid var(--border);color:var(--gold)}
 .pl-placar{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);white-space:nowrap}
 .pl-pts{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--bg4);color:var(--text-muted);min-width:42px;text-align:center}
 .pl-pts.ganhou{background:rgba(34,197,94,.15);color:var(--green)}
+
+/* POR JOGO */
+.jogo-head{text-align:center;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px}
+.jh-times{display:flex;align-items:center;justify-content:center;gap:14px}
+.jh-t{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:14px;font-weight:600;width:90px}
+.jh-t img{width:40px;height:auto;border-radius:3px}
+.jh-x{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--text-dim)}
+.jh-res{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--gold);margin-top:8px}
+.jh-meta{font-size:12px;color:var(--text-muted);margin-top:4px}
+.dist{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+.dist h4{font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.dist-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dist-row .dp{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);width:54px}
+.dist-track{flex:1;height:16px;background:var(--bg4);border-radius:8px;overflow:hidden}
+.dist-fill{height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold));border-radius:8px}
+.dist-row .dc{font-size:12px;color:var(--text-muted);width:60px;text-align:right}
+.locked{text-align:center;color:var(--text-muted);padding:30px;font-size:14px}
+
 .empty{text-align:center;color:var(--text-muted);padding:24px;font-size:14px}
 .loading{text-align:center;padding:50px;color:var(--text-muted)}
 .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
 @keyframes spin{to{transform:rotate(360deg)}}
-footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-size:12px;color:var(--text-dim)}
 .voltar{display:inline-block;margin-bottom:16px;color:var(--text-muted);font-size:13px;cursor:pointer;text-decoration:none}
 .voltar:hover{color:var(--gold)}
+footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-size:12px;color:var(--text-dim)}
 @media(max-width:520px){.nav-opt{display:none}}
 </style>
 </head>
 <body>
-
 <header class="site-header">
   <div class="header-inner">
-    <a class="logo" href="palpites.html"><img class="logo-img" src="shuriks-logo.png" alt="Shuriks"><div class="logo-text" id="logo-text">Bolão Shuriks</div></a>
+    <a class="logo" href="home.html"><img class="logo-img" src="shuriks-logo.png" alt="Shuriks"><div class="logo-text" id="logo-text">Bolão Shuriks</div></a>
     <nav>
-      <a href="home.html" class="nav-opt">Classificação</a>
+      <a href="home.html" class="nav-opt">Classif.</a>
       <a href="index.html" class="nav-bolao">⚽ Bolão</a>
       <a href="palpites.html" class="active">🎯 Palpites</a>
+      <a href="stats.html" class="nav-opt">📊 Stats</a>
     </nav>
   </div>
 </header>
-
 <section class="hero">
   <img class="hero-logo" src="shuriks-logo.png" alt="Shuriks">
   <div class="hero-title">Palpites</div>
@@ -90,23 +106,29 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
 
 <div class="main">
   <div id="loading" class="loading"><div class="spinner"></div>Carregando...</div>
-
-  <div id="lista-area" style="display:none">
-    <input class="busca" id="busca" placeholder="🔍 Buscar participante..." oninput="filtrar()">
-    <div class="grid" id="grid"></div>
-  </div>
-
-  <div id="detalhe" class="detalhe">
-    <a class="voltar" onclick="voltar()">← Voltar pra lista</a>
-    <div class="det-head">
-      <div class="det-av" id="det-av">?</div>
-      <div><div class="det-nome" id="det-nome">—</div><div class="det-pts" id="det-pts"></div></div>
+  <div id="conteudo" style="display:none">
+    <div class="tabs">
+      <div class="tab active" id="tab-pessoa" onclick="trocar('pessoa')">Por pessoa</div>
+      <div class="tab" id="tab-jogo" onclick="trocar('jogo')">Por jogo</div>
     </div>
-    <div id="det-palpites"></div>
+
+    <div id="painel-pessoa">
+      <input class="busca" id="busca" placeholder="🔍 Buscar participante..." oninput="filtrar()">
+      <div class="grid" id="grid"></div>
+      <div id="detalhe" class="detalhe">
+        <a class="voltar" onclick="voltar()">← Voltar pra lista</a>
+        <div class="det-head"><div class="det-av" id="det-av">?</div><div><div class="det-nome" id="det-nome">—</div><div class="det-pts" id="det-pts"></div></div></div>
+        <div id="det-palpites"></div>
+      </div>
+    </div>
+
+    <div id="painel-jogo" style="display:none">
+      <select class="sel" id="sel-jogo" onchange="renderJogo()"></select>
+      <div id="jogo-view"></div>
+    </div>
   </div>
 </div>
-
-<footer>Bolão da Copa 2026 · <strong style="color:var(--gold)">feito com Claude</strong></footer>
+<footer>Bolão Shuriks · <strong style="color:var(--gold)">feito com Claude</strong></footer>
 
 <script>
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyr5fXwBeGQKntrZv4L6WjkCSCYG5d3rlIrV85_i_wO_VZpb-SVhRmub7aVYCj0KPMDtA/exec';
@@ -119,80 +141,124 @@ const FLAGS = {
   'Argentina':'ar','Argélia':'dz','França':'fr','Senegal':'sn','Noruega':'no','Áustria':'at',
   'Jordânia':'jo','Portugal':'pt','Inglaterra':'gb-eng','Croácia':'hr','Gana':'gh','Panamá':'pa',
   'Uzbequistão':'uz','Colômbia':'co','Itália':'it','Iraque':'iq','Dinamarca':'dk','Suécia':'se',
-  'Polônia':'pl','Tchéquia':'cz','Bósnia e Herzegovina':'ba','Turquia':'tr','Bolívia':'bo','Nova Caledônia':'nc','Jamaica':'jm','RD Congo':'cd',
+  'Polônia':'pl','Tchéquia':'cz','Bósnia e Herzegovina':'ba','Turquia':'tr','Bolívia':'bo',
+  'Nova Caledônia':'nc','Jamaica':'jm','RD Congo':'cd',
 };
 function flag(t){const c=FLAGS[(t||'').trim()];return c?`<img src="https://flagcdn.com/w40/${c}.png">`:'🏳️';}
+function flagBig(t){const c=FLAGS[(t||'').trim()];return c?`<img src="https://flagcdn.com/w80/${c}.png">`:'🏳️';}
 function initials(n){const p=n.trim().split(' ');return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
-function primeiroUltimo(n){const p=n.trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
+function nomeCurto(n){const p=n.trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
 
 let PARTICIPANTES=[], JOGOS=[], PALPITES=[];
 
-async function carregar(){
-  try{
-    const res = await fetch(SHEETS_URL);
-    const d = await res.json();
-    PARTICIPANTES = (d.participantes||[]).slice().sort((a,b)=>b.pontos-a.pontos);
-    JOGOS = d.jogos||[];
-    PALPITES = d.palpites||[];
-    if (d.config && d.config.titulo) document.getElementById('logo-text').textContent = d.config.titulo;
-    document.getElementById('loading').style.display='none';
-    document.getElementById('lista-area').style.display='block';
-    render(PARTICIPANTES);
-  }catch(e){
-    document.getElementById('loading').innerHTML='<p style="color:var(--text-muted)">Erro ao carregar. Recarregue.</p>';
-  }
+function trocar(t){
+  document.getElementById('tab-pessoa').classList.toggle('active',t==='pessoa');
+  document.getElementById('tab-jogo').classList.toggle('active',t==='jogo');
+  document.getElementById('painel-pessoa').style.display=t==='pessoa'?'block':'none';
+  document.getElementById('painel-jogo').style.display=t==='jogo'?'block':'none';
 }
 
-function render(lista){
-  document.getElementById('grid').innerHTML = lista.map(p=>{
-    const av = p.foto?`<img src="${p.foto}">`:initials(p.nome);
+// ── POR PESSOA ──
+function renderLista(lista){
+  document.getElementById('grid').innerHTML=lista.map(p=>{
+    const av=p.foto?`<img src="${p.foto}">`:initials(p.nome);
     return `<div class="pcard" onclick="ver('${p.nome.replace(/'/g,"\\'")}')">
       <div class="av">${av}</div>
-      <div style="min-width:0"><div class="pcard-nome">${primeiroUltimo(p.nome)}</div><div class="pcard-pts">${p.pontos} pts</div></div>
+      <div style="min-width:0"><div class="pcard-nome">${nomeCurto(p.nome)}</div><div class="pcard-pts">${p.pontos} pts</div></div>
     </div>`;
-  }).join('') || '<div class="empty">Ninguém cadastrado ainda.</div>';
+  }).join('')||'<div class="empty">Ninguém cadastrado ainda.</div>';
 }
-
-function filtrar(){
-  const q = document.getElementById('busca').value.toLowerCase();
-  render(PARTICIPANTES.filter(p=>p.nome.toLowerCase().includes(q)));
-}
-
+function filtrar(){const q=document.getElementById('busca').value.toLowerCase();renderLista(PARTICIPANTES.filter(p=>p.nome.toLowerCase().includes(q)));}
 function ver(nome){
-  const p = PARTICIPANTES.find(x=>x.nome===nome);
-  if (!p) return;
-  document.getElementById('lista-area').style.display='none';
+  const p=PARTICIPANTES.find(x=>x.nome===nome); if(!p)return;
+  document.getElementById('busca').style.display='none';
+  document.getElementById('grid').style.display='none';
   document.getElementById('detalhe').classList.add('open');
-  document.getElementById('det-av').innerHTML = p.foto?`<img src="${p.foto}">`:initials(p.nome);
-  document.getElementById('det-nome').textContent = p.nome;
-  document.getElementById('det-pts').textContent = p.pontos+' pontos no total';
-
-  const meus = PALPITES.filter(x=>x.nome.toLowerCase()===nome.toLowerCase());
-  const jogoPorNum={}; JOGOS.forEach(j=>jogoPorNum[String(j.num)]=j);
-
-  document.getElementById('det-palpites').innerHTML = meus.length ? meus.map(pl=>{
-    const j = jogoPorNum[String(pl.jogo)] || {time1:'?',time2:'?'};
-    const ganhou = pl.pontos>0;
+  document.getElementById('det-av').innerHTML=p.foto?`<img src="${p.foto}">`:initials(p.nome);
+  document.getElementById('det-nome').textContent=p.nome;
+  document.getElementById('det-pts').textContent=p.pontos+' pontos · '+(p.cravadas||0)+' cravada(s)';
+  const meus=PALPITES.filter(x=>x.nome.toLowerCase()===nome.toLowerCase());
+  const jn={};JOGOS.forEach(j=>jn[String(j.num)]=j);
+  document.getElementById('det-palpites').innerHTML=meus.length?meus.map(pl=>{
+    const j=jn[String(pl.jogo)]||{time1:'?',time2:'?'};
+    const fim=(j.placar1!==null&&j.placar2!==null);
     return `<div class="pl-row">
       <div class="pl-time">${flag(j.time1)}<span>${j.time1}</span></div>
       <div class="pl-placar">${pl.gol1} × ${pl.gol2}</div>
       <div class="pl-time r">${flag(j.time2)}<span>${j.time2}</span></div>
-      <div class="pl-pts ${ganhou?'ganhou':''}">${pl.pontos>0?'+'+pl.pontos:(j.status==='encerrado'?'0':'—')}</div>
+      <div class="pl-pts ${pl.pontos>0?'ganhou':''}">${pl.pontos>0?'+'+pl.pontos:(fim?'0':'—')}</div>
     </div>`;
-  }).join('') : '<div class="empty">Ainda não palpitou em nenhum jogo.</div>';
+  }).join(''):'<div class="empty">Ainda não palpitou em nenhum jogo.</div>';
 }
-
 function voltar(){
   document.getElementById('detalhe').classList.remove('open');
-  document.getElementById('lista-area').style.display='block';
+  document.getElementById('busca').style.display='block';
+  document.getElementById('grid').style.display='grid';
 }
 
-if (SHEETS_URL.startsWith('COLE_AQUI')){
-  document.getElementById('loading').innerHTML='<p style="color:var(--text-muted)">Falta configurar a URL do script no código.</p>';
-} else {
-  carregar();
-  setInterval(carregar, 60000);
+// ── POR JOGO (como o grupo palpitou) ──
+function renderJogo(){
+  const num=document.getElementById('sel-jogo').value;
+  const j=JOGOS.find(x=>String(x.num)===String(num)); if(!j)return;
+  const fim=(j.placar1!==null&&j.placar2!==null);
+  let head=`<div class="jogo-head">
+    <div class="jh-times">
+      <div class="jh-t">${flagBig(j.time1)}<span>${j.time1}</span></div>
+      <div class="jh-x">×</div>
+      <div class="jh-t">${flagBig(j.time2)}<span>${j.time2}</span></div>
+    </div>
+    ${fim?`<div class="jh-res">${j.placar1} × ${j.placar2}</div>`:''}
+    <div class="jh-meta">Jogo ${j.num} · R${j.rodada} · ${j.data} · ${j.hora}${fim?' · Encerrado':(j.aberto?' · Aberto':' · Em andamento')}</div>
+  </div>`;
+
+  if(j.aberto){
+    document.getElementById('jogo-view').innerHTML=head+'<div class="locked">🔒 Os palpites de todos aparecem aqui assim que o jogo começar (pra ninguém colar no chute do outro).</div>';
+    return;
+  }
+  const pals=PALPITES.filter(p=>String(p.jogo)===String(num));
+  if(!pals.length){document.getElementById('jogo-view').innerHTML=head+'<div class="empty">Ninguém palpitou neste jogo.</div>';return;}
+
+  // distribuição dos placares mais chutados
+  const cont={};pals.forEach(p=>{const k=p.gol1+'×'+p.gol2;cont[k]=(cont[k]||0)+1;});
+  const top=Object.entries(cont).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxC=top[0][1];
+  const dist=`<div class="dist"><h4>Placares mais chutados</h4>${top.map(([k,c])=>`
+    <div class="dist-row"><div class="dp">${k}</div>
+    <div class="dist-track"><div class="dist-fill" style="width:${Math.round((c/maxC)*100)}%"></div></div>
+    <div class="dc">${c} ${c>1?'pessoas':'pessoa'}</div></div>`).join('')}</div>`;
+
+  const linhas=pals.slice().sort((a,b)=>(b.pontos||0)-(a.pontos||0)).map(p=>{
+    const part=PARTICIPANTES.find(x=>x.nome.toLowerCase()===p.nome.toLowerCase())||{};
+    const av=part.foto?`<img src="${part.foto}">`:initials(p.nome);
+    return `<div class="pl-row">
+      <div class="pl-time"><div class="av" style="width:28px;height:28px;font-size:11px">${av}</div><span>${nomeCurto(p.nome)}</span></div>
+      <div class="pl-placar">${p.gol1} × ${p.gol2}</div>
+      <div class="pl-time r"></div>
+      <div class="pl-pts ${p.pontos>0?'ganhou':''}">${p.pontos>0?'+'+p.pontos:(fim?'0':'—')}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('jogo-view').innerHTML=head+dist+linhas;
 }
+
+function preencherJogos(){
+  // mostra primeiro os já encerrados/fechados (que têm o que mostrar)
+  const ord=JOGOS.slice().sort((a,b)=>(a.aberto-b.aberto)|| (b.num-a.num));
+  document.getElementById('sel-jogo').innerHTML=ord.map(j=>`<option value="${j.num}">Jogo ${j.num} · ${j.time1} × ${j.time2}${(j.placar1!==null&&j.placar2!==null)?` (${j.placar1}×${j.placar2})`:''}</option>`).join('');
+}
+
+async function carregar(){
+  try{
+    const res=await fetch(SHEETS_URL); const d=await res.json();
+    PARTICIPANTES=(d.participantes||[]).slice().sort((a,b)=>b.pontos-a.pontos);
+    JOGOS=d.jogos||[]; PALPITES=d.palpites||[];
+    if(d.config&&d.config.titulo)document.getElementById('logo-text').textContent=d.config.titulo;
+    document.getElementById('loading').style.display='none';
+    document.getElementById('conteudo').style.display='block';
+    renderLista(PARTICIPANTES); preencherJogos(); renderJogo();
+  }catch(e){document.getElementById('loading').innerHTML='<p style="color:var(--text-muted)">Erro ao carregar. Recarregue.</p>';}
+}
+if(SHEETS_URL.startsWith('COLE_AQUI')){document.getElementById('loading').innerHTML='<p style="color:var(--text-muted)">Falta configurar a URL do script.</p>';}
+else{ carregar(); setInterval(carregar,60000); }
 </script>
 </body>
 </html>
