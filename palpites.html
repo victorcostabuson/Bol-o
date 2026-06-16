@@ -95,6 +95,7 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
       <a href="index.html" class="nav-bolao">⚽ Bolão</a>
       <a href="palpites.html" class="active">🎯 Palpites</a>
       <a href="stats.html" class="nav-opt">📊 Stats</a>
+      <a href="perfil.html" class="nav-opt">👤 Perfil</a>
     </nav>
   </div>
 </header>
@@ -146,10 +147,13 @@ const FLAGS = {
 };
 function flag(t){const c=FLAGS[(t||'').trim()];return c?`<img src="https://flagcdn.com/w40/${c}.png">`:'🏳️';}
 function flagBig(t){const c=FLAGS[(t||'').trim()];return c?`<img src="https://flagcdn.com/w80/${c}.png">`:'🏳️';}
-function initials(n){const p=n.trim().split(' ');return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
-function nomeCurto(n){const p=n.trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fotoSafe(f){f=String(f||'');return /^data:image\//.test(f)||/^https:\/\//.test(f)?f:'';}
+function initials(n){const p=String(n||'').trim().split(' ');return ((p[0][0]||'?')+(p[1]?p[1][0]:'')).toUpperCase();}
+function nomeCurto(n){const p=String(n||'').trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
+function avImg(p){const f=fotoSafe(p.foto);return f?`<img src="${f}">`:esc(initials(p.nome));}
 
-let PARTICIPANTES=[], JOGOS=[], PALPITES=[];
+let PARTICIPANTES=[], JOGOS=[], PALPITES=[], LISTA=[];
 
 function trocar(t){
   document.getElementById('tab-pessoa').classList.toggle('active',t==='pessoa');
@@ -160,32 +164,32 @@ function trocar(t){
 
 // ── POR PESSOA ──
 function renderLista(lista){
-  document.getElementById('grid').innerHTML=lista.map(p=>{
-    const av=p.foto?`<img src="${p.foto}">`:initials(p.nome);
-    return `<div class="pcard" onclick="ver('${p.nome.replace(/'/g,"\\'")}')">
-      <div class="av">${av}</div>
-      <div style="min-width:0"><div class="pcard-nome">${nomeCurto(p.nome)}</div><div class="pcard-pts">${p.pontos} pts</div></div>
+  LISTA=lista;
+  document.getElementById('grid').innerHTML=lista.map((p,i)=>{
+    return `<div class="pcard" onclick="ver(${i})">
+      <div class="av">${avImg(p)}</div>
+      <div style="min-width:0"><div class="pcard-nome">${esc(nomeCurto(p.nome))}</div><div class="pcard-pts">${p.pontos} pts</div></div>
     </div>`;
   }).join('')||'<div class="empty">Ninguém cadastrado ainda.</div>';
 }
 function filtrar(){const q=document.getElementById('busca').value.toLowerCase();renderLista(PARTICIPANTES.filter(p=>p.nome.toLowerCase().includes(q)));}
-function ver(nome){
-  const p=PARTICIPANTES.find(x=>x.nome===nome); if(!p)return;
+function ver(idx){
+  const p=LISTA[idx]; if(!p)return;
   document.getElementById('busca').style.display='none';
   document.getElementById('grid').style.display='none';
   document.getElementById('detalhe').classList.add('open');
-  document.getElementById('det-av').innerHTML=p.foto?`<img src="${p.foto}">`:initials(p.nome);
-  document.getElementById('det-nome').textContent=p.nome;
+  document.getElementById('det-av').innerHTML=avImg(p);
+  document.getElementById('det-nome').textContent=nomeCurto(p.nome);
   document.getElementById('det-pts').textContent=p.pontos+' pontos · '+(p.cravadas||0)+' cravada(s)';
-  const meus=PALPITES.filter(x=>x.nome.toLowerCase()===nome.toLowerCase());
+  const meus=PALPITES.filter(x=>x.nome.toLowerCase()===p.nome.toLowerCase());
   const jn={};JOGOS.forEach(j=>jn[String(j.num)]=j);
   document.getElementById('det-palpites').innerHTML=meus.length?meus.map(pl=>{
     const j=jn[String(pl.jogo)]||{time1:'?',time2:'?'};
     const fim=(j.placar1!==null&&j.placar2!==null);
     return `<div class="pl-row">
-      <div class="pl-time">${flag(j.time1)}<span>${j.time1}</span></div>
+      <div class="pl-time">${flag(j.time1)}<span>${esc(j.time1)}</span></div>
       <div class="pl-placar">${pl.gol1} × ${pl.gol2}</div>
-      <div class="pl-time r">${flag(j.time2)}<span>${j.time2}</span></div>
+      <div class="pl-time r">${flag(j.time2)}<span>${esc(j.time2)}</span></div>
       <div class="pl-pts ${pl.pontos>0?'ganhou':''}">${pl.pontos>0?'+'+pl.pontos:(fim?'0':'—')}</div>
     </div>`;
   }).join(''):'<div class="empty">Ainda não palpitou em nenhum jogo.</div>';
@@ -203,9 +207,9 @@ function renderJogo(){
   const fim=(j.placar1!==null&&j.placar2!==null);
   let head=`<div class="jogo-head">
     <div class="jh-times">
-      <div class="jh-t">${flagBig(j.time1)}<span>${j.time1}</span></div>
+      <div class="jh-t">${flagBig(j.time1)}<span>${esc(j.time1)}</span></div>
       <div class="jh-x">×</div>
-      <div class="jh-t">${flagBig(j.time2)}<span>${j.time2}</span></div>
+      <div class="jh-t">${flagBig(j.time2)}<span>${esc(j.time2)}</span></div>
     </div>
     ${fim?`<div class="jh-res">${j.placar1} × ${j.placar2}</div>`:''}
     <div class="jh-meta">Jogo ${j.num} · R${j.rodada} · ${j.data} · ${j.hora}${fim?' · Encerrado':(j.aberto?' · Aberto':' · Em andamento')}</div>
@@ -229,9 +233,9 @@ function renderJogo(){
 
   const linhas=pals.slice().sort((a,b)=>(b.pontos||0)-(a.pontos||0)).map(p=>{
     const part=PARTICIPANTES.find(x=>x.nome.toLowerCase()===p.nome.toLowerCase())||{};
-    const av=part.foto?`<img src="${part.foto}">`:initials(p.nome);
+    const av=avImg(part.nome?part:{nome:p.nome,foto:part.foto});
     return `<div class="pl-row">
-      <div class="pl-time"><div class="av" style="width:28px;height:28px;font-size:11px">${av}</div><span>${nomeCurto(p.nome)}</span></div>
+      <div class="pl-time"><div class="av" style="width:28px;height:28px;font-size:11px">${av}</div><span>${esc(nomeCurto(p.nome))}</span></div>
       <div class="pl-placar">${p.gol1} × ${p.gol2}</div>
       <div class="pl-time r"></div>
       <div class="pl-pts ${p.pontos>0?'ganhou':''}">${p.pontos>0?'+'+p.pontos:(fim?'0':'—')}</div>
@@ -243,7 +247,7 @@ function renderJogo(){
 function preencherJogos(){
   // mostra primeiro os já encerrados/fechados (que têm o que mostrar)
   const ord=JOGOS.slice().sort((a,b)=>(a.aberto-b.aberto)|| (b.num-a.num));
-  document.getElementById('sel-jogo').innerHTML=ord.map(j=>`<option value="${j.num}">Jogo ${j.num} · ${j.time1} × ${j.time2}${(j.placar1!==null&&j.placar2!==null)?` (${j.placar1}×${j.placar2})`:''}</option>`).join('');
+  document.getElementById('sel-jogo').innerHTML=ord.map(j=>`<option value="${j.num}">Jogo ${j.num} · ${esc(j.time1)} × ${esc(j.time2)}${(j.placar1!==null&&j.placar2!==null)?` (${j.placar1}×${j.placar2})`:''}</option>`).join('');
 }
 
 async function carregar(){

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Perfil — Bolão Shuriks</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#FF2E9A;--gold-light:#FF6FC0;--gold-dark:#C01878;
+  --bg:#0a0c10;--bg2:#12151c;--bg3:#1a1e28;--bg4:#222738;
+  --border:rgba(255,46,154,0.18);--border-strong:rgba(255,46,154,0.4);
+  --text:#f0f0f0;--text-muted:#8892a4;--text-dim:#555f72;--green:#22c55e;--red:#e03030;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+.site-header{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-inner{max-width:860px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:58px}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo-img{width:38px;height:38px;border-radius:50%;object-fit:cover}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--gold)}
+nav{display:flex;gap:2px;flex-wrap:wrap;justify-content:flex-end}
+nav a{color:var(--text-muted);text-decoration:none;font-size:11px;font-weight:600;padding:6px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.4px}
+nav a:hover,nav a.active{color:var(--gold);background:rgba(255,46,154,0.08)}
+nav a.nav-bolao{border:1px solid var(--border);color:var(--gold)}
+.hero{background:var(--bg2);border-bottom:1px solid var(--border);padding:24px 20px;text-align:center}
+.hero-logo{width:78px;height:78px;border-radius:50%;object-fit:cover;margin:0 auto 8px;display:block;filter:drop-shadow(0 0 24px rgba(255,46,154,.4))}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,6vw,52px);letter-spacing:3px;color:var(--gold)}
+.main{max-width:620px;margin:0 auto;padding:24px 16px 60px}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
+.card h3{font-family:'Oswald',sans-serif;font-size:15px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.field{margin-bottom:12px}
+.field label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:6px}
+.field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:15px;outline:none}
+.field input:focus{border-color:var(--border-strong)}
+.btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#15110a;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;font-family:'Inter',sans-serif}
+.btn:disabled{opacity:.5;cursor:default}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--text-muted)}
+
+/* AVATAR */
+.av-edit{display:flex;align-items:center;gap:16px}
+.av-preview{width:90px;height:90px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;color:var(--gold);font-size:30px;overflow:hidden;border:2px solid var(--border);flex-shrink:0}
+.av-preview img{width:100%;height:100%;object-fit:cover}
+.av-actions{flex:1}
+.av-hint{font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.4}
+.file-btn{display:inline-block;width:100%;text-align:center;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:11px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer}
+.file-btn:hover{border-color:var(--border-strong)}
+input[type=file]{display:none}
+
+/* TIME */
+.time-cur{display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:12px;color:var(--text-muted)}
+.time-cur img{width:24px;border-radius:2px}
+
+/* RESUMO */
+.resumo-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.rh-av{width:54px;height:54px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;color:var(--gold);font-size:18px;overflow:hidden;border:2px solid var(--border)}
+.rh-av img{width:100%;height:100%;object-fit:cover}
+.rh-nome{font-family:'Oswald',sans-serif;font-size:19px;font-weight:600}
+.rh-pos{font-size:12px;color:var(--gold)}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.stat{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 6px;text-align:center}
+.stat .v{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);line-height:1}
+.stat .l{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+.med-count{font-size:12px;color:var(--text-muted);margin-bottom:10px}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:9px}
+.badge{background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:12px;display:flex;align-items:center;gap:9px}
+.badge.locked{opacity:.35;filter:grayscale(.6)}
+.badge .ico{font-size:23px;line-height:1}
+.badge .bt{font-size:12px;font-weight:600}
+.badge .bd{font-size:10px;color:var(--text-muted);margin-top:1px;line-height:1.25}
+
+.auth-tabs{display:flex;gap:8px;margin-bottom:18px}
+.auth-tab{flex:1;text-align:center;padding:10px;border-radius:10px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;cursor:pointer;background:var(--bg3);color:var(--text-muted);border:1px solid transparent}
+.auth-tab.active{background:rgba(255,46,154,0.1);color:var(--gold);border-color:var(--border-strong)}
+
+.loading{text-align:center;padding:50px;color:var(--text-muted)}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg4);border:1px solid var(--border);color:var(--text);padding:13px 20px;border-radius:10px;font-size:14px;z-index:300;opacity:0;transition:all .25s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{border-color:var(--red);color:#ffb4b4}
+.toast.ok{border-color:var(--green);color:#b4ffc4}
+footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-size:12px;color:var(--text-dim)}
+@media(max-width:520px){.nav-opt{display:none}.stat-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="home.html"><img class="logo-img" src="shuriks-logo.png" alt="Shuriks"><div class="logo-text" id="logo-text">Bolão Shuriks</div></a>
+    <nav>
+      <a href="home.html" class="nav-opt">Classif.</a>
+      <a href="index.html" class="nav-bolao">⚽ Bolão</a>
+      <a href="palpites.html" class="nav-opt">🎯 Palpites</a>
+      <a href="stats.html" class="nav-opt">📊 Stats</a>
+      <a href="perfil.html" class="active">👤 Perfil</a>
+    </nav>
+  </div>
+</header>
+<section class="hero">
+  <img class="hero-logo" src="shuriks-logo.png" alt="Shuriks">
+  <div class="hero-title">Meu Perfil</div>
+</section>
+
+<div class="main">
+  <div id="loading" class="loading"><div class="spinner"></div>Carregando...</div>
+
+  <!-- LOGIN (se não estiver logado) -->
+  <div id="login-area" class="card" style="display:none">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login" onclick="trocarTab('login')">Entrar</div>
+      <div class="auth-tab" id="tab-reg" onclick="trocarTab('reg')">Criar conta</div>
+    </div>
+    <div class="field"><label>Seu nome</label><input id="in-nome" placeholder="Ex: João Silva" autocomplete="off"></div>
+    <div class="field"><label>PIN</label><input id="in-pin" type="password" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
+    <button class="btn" id="btn-auth" onclick="enviarAuth()">Entrar</button>
+  </div>
+
+  <!-- PERFIL (logado) -->
+  <div id="perfil-area" style="display:none">
+
+    <div class="card">
+      <h3>📸 Avatar</h3>
+      <div class="av-edit">
+        <div class="av-preview" id="av-preview">?</div>
+        <div class="av-actions">
+          <label class="file-btn">Escolher foto<input type="file" accept="image/*" onchange="onPic(event)"></label>
+          <button class="btn" id="btn-foto" style="display:none;margin-top:8px" onclick="salvarFoto()">Salvar foto</button>
+          <div class="av-hint">A imagem é reduzida automaticamente e fica só no bolão.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>⚽ Time do coração</h3>
+      <div class="time-cur" id="time-cur"></div>
+      <div class="field"><input id="in-time" list="times-list" placeholder="Ex: Flamengo, Brasil, Palmeiras..." autocomplete="off"></div>
+      <datalist id="times-list"></datalist>
+      <button class="btn" onclick="salvarTime()">Salvar time</button>
+    </div>
+
+    <div class="card">
+      <h3>🔑 Trocar PIN</h3>
+      <div class="field"><label>Novo PIN (mín. 4 dígitos)</label><input id="in-novopin" type="password" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
+      <div class="field"><label>Confirmar novo PIN</label><input id="in-novopin2" type="password" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
+      <div class="av-hint" style="margin:-2px 0 12px"><strong style="color:var(--gold)">⚠️ Use um PIN simples só deste bolão</strong> — nunca a senha do seu banco, e-mail ou redes sociais.</div>
+      <button class="btn" onclick="salvarPin()">Trocar PIN</button>
+    </div>
+
+    <div class="card">
+      <h3>📊 Meu resumo</h3>
+      <div class="resumo-head">
+        <div class="rh-av" id="rh-av">?</div>
+        <div><div class="rh-nome" id="rh-nome">—</div><div class="rh-pos" id="rh-pos"></div></div>
+      </div>
+      <div class="stat-grid" id="stat-grid"></div>
+      <div class="med-count" id="med-count"></div>
+      <div class="badges" id="badges"></div>
+    </div>
+
+    <button class="btn btn-ghost" onclick="sair()" style="margin-top:4px">Sair desta conta</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<footer>Bolão Shuriks · <strong style="color:var(--gold)">feito com Claude</strong></footer>
+
+<script src="medals.js"></script>
+<script>
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyr5fXwBeGQKntrZv4L6WjkCSCYG5d3rlIrV85_i_wO_VZpb-SVhRmub7aVYCj0KPMDtA/exec';
+const FLAGS = {
+  'México':'mx','África do Sul':'za','Coreia do Sul':'kr','Canadá':'ca','Estados Unidos':'us','Paraguai':'py',
+  'Austrália':'au','Catar':'qa','Suíça':'ch','Brasil':'br','Marrocos':'ma','Haiti':'ht','Escócia':'gb-sct',
+  'Alemanha':'de','Curaçao':'cw','Holanda':'nl','Japão':'jp','Costa do Marfim':'ci','Equador':'ec','Tunísia':'tn',
+  'Espanha':'es','Cabo Verde':'cv','Bélgica':'be','Egito':'eg','Arábia Saudita':'sa','Uruguai':'uy','Irã':'ir',
+  'Nova Zelândia':'nz','Argentina':'ar','Argélia':'dz','França':'fr','Senegal':'sn','Noruega':'no','Áustria':'at',
+  'Jordânia':'jo','Portugal':'pt','Inglaterra':'gb-eng','Croácia':'hr','Gana':'gh','Panamá':'pa','Uzbequistão':'uz',
+  'Colômbia':'co','Tchéquia':'cz','Bósnia e Herzegovina':'ba','Turquia':'tr','Suécia':'se','Iraque':'iq','RD Congo':'cd',
+};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fotoSafe(f){f=String(f||'');return /^data:image\//.test(f)||/^https:\/\//.test(f)?f:'';}
+function initials(n){const p=String(n||'').trim().split(' ');return ((p[0][0]||'?')+(p[1]?p[1][0]:'')).toUpperCase();}
+function nomeCurto(n){const p=String(n||'').trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
+function flagDe(t){const c=FLAGS[(t||'').trim()];return c?`<img src="https://flagcdn.com/w40/${c}.png">`:'';}
+
+let usuario=JSON.parse(localStorage.getItem('bolao_user')||'null');
+let modoAuth='login', novaFoto=null, DADOS=null, MEU=null;
+
+function trocarTab(m){modoAuth=m;
+  document.getElementById('tab-login').classList.toggle('active',m==='login');
+  document.getElementById('tab-reg').classList.toggle('active',m==='reg');
+  document.getElementById('btn-auth').textContent=m==='login'?'Entrar':'Criar conta';
+}
+async function post(body){
+  try{const r=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)});return await r.json();}
+  catch(e){return{ok:false,erro:'Sem conexão com o servidor.'};}
+}
+async function enviarAuth(){
+  const nome=document.getElementById('in-nome').value.trim();
+  const pin=document.getElementById('in-pin').value.trim();
+  if(!nome){toast('Digite seu nome.','error');return;}
+  if(pin.length<4){toast('PIN precisa de 4+ dígitos.','error');return;}
+  const btn=document.getElementById('btn-auth');btn.disabled=true;btn.textContent='...';
+  const r=await post({action:modoAuth==='login'?'login':'registrar',nome,pin});
+  btn.disabled=false;btn.textContent=modoAuth==='login'?'Entrar':'Criar conta';
+  if(!r.ok){toast(r.erro||'Erro.','error');return;}
+  usuario={nome:r.nome||nome,pin,foto:r.foto||''};
+  localStorage.setItem('bolao_user',JSON.stringify(usuario));
+  iniciar();
+}
+function sair(){usuario=null;localStorage.removeItem('bolao_user');location.reload();}
+
+// avatar
+function onPic(e){
+  const file=e.target.files[0]; if(!file)return;
+  const img=new Image();
+  img.onload=()=>{
+    const S=160,c=document.createElement('canvas');c.width=S;c.height=S;
+    const ctx=c.getContext('2d');
+    const scale=Math.max(S/img.width,S/img.height),w=img.width*scale,h=img.height*scale;
+    ctx.drawImage(img,(S-w)/2,(S-h)/2,w,h);
+    novaFoto=c.toDataURL('image/jpeg',0.72);
+    document.getElementById('av-preview').innerHTML=`<img src="${novaFoto}">`;
+    document.getElementById('btn-foto').style.display='block';
+    URL.revokeObjectURL(img.src);
+  };
+  img.src=URL.createObjectURL(file);
+}
+async function salvarFoto(){
+  if(!novaFoto)return;
+  const btn=document.getElementById('btn-foto');btn.disabled=true;btn.textContent='Salvando...';
+  const r=await post({action:'perfil',nome:usuario.nome,pin:usuario.pin,foto:novaFoto});
+  btn.disabled=false;btn.textContent='Salvar foto';
+  if(!r.ok){toast(r.erro||'Erro.','error');return;}
+  usuario.foto=novaFoto;localStorage.setItem('bolao_user',JSON.stringify(usuario));
+  document.getElementById('rh-av').innerHTML=`<img src="${novaFoto}">`;
+  btn.style.display='none';toast('Foto salva! ✅','ok');
+}
+async function salvarTime(){
+  const time=document.getElementById('in-time').value.trim();
+  const r=await post({action:'perfil',nome:usuario.nome,pin:usuario.pin,time});
+  if(!r.ok){toast(r.erro||'Erro.','error');return;}
+  document.getElementById('time-cur').innerHTML=time?`${flagDe(time)} Torce pra <strong style="color:var(--text);margin-left:4px">${esc(time)}</strong>`:'Nenhum time definido ainda.';
+  toast('Time salvo! ⚽','ok');
+}
+async function salvarPin(){
+  const a=document.getElementById('in-novopin').value.trim(), b=document.getElementById('in-novopin2').value.trim();
+  if(a.length<4){toast('PIN precisa de 4+ dígitos.','error');return;}
+  if(a!==b){toast('Os PINs não batem.','error');return;}
+  const r=await post({action:'trocarpin',nome:usuario.nome,pin:usuario.pin,novoPin:a});
+  if(!r.ok){toast(r.erro||'Erro.','error');return;}
+  usuario.pin=a;localStorage.setItem('bolao_user',JSON.stringify(usuario));
+  document.getElementById('in-novopin').value='';document.getElementById('in-novopin2').value='';
+  toast('PIN trocado! 🔑','ok');
+}
+
+function renderResumo(){
+  if(!DADOS||!MEU)return;
+  const parts=(DADOS.participantes||[]).slice().sort((a,b)=>b.pontos-a.pontos);
+  const ctx=buildMedalCtx(parts,DADOS.palpites||[],DADOS.jogos||[],DADOS.cutoff||1);
+  const pos=ctx.posicaoDe[MEU.nome]||'-';
+  document.getElementById('rh-av').innerHTML=fotoSafe(MEU.foto)?`<img src="${fotoSafe(MEU.foto)}">`:esc(initials(MEU.nome));
+  document.getElementById('rh-nome').textContent=nomeCurto(MEU.nome);
+  document.getElementById('rh-pos').textContent=pos+'º lugar no bolão';
+  document.getElementById('stat-grid').innerHTML=`
+    <div class="stat"><div class="v">${MEU.pontos}</div><div class="l">Pontos</div></div>
+    <div class="stat"><div class="v">${MEU.cravadas||0}</div><div class="l">Cravadas</div></div>
+    <div class="stat"><div class="v">${MEU.acertos||0}</div><div class="l">Acertos</div></div>
+    <div class="stat"><div class="v">${MEU.aproveitamento||0}%</div><div class="l">Aproveit.</div></div>`;
+  const meds=calcularMedalhas(MEU,ctx).slice().sort((a,b)=>(b.ok?1:0)-(a.ok?1:0));
+  const ganhas=meds.filter(m=>m.ok).length;
+  document.getElementById('med-count').textContent=`🏅 ${ganhas} de ${meds.length} medalhas conquistadas`;
+  document.getElementById('badges').innerHTML=meds.map(b=>`<div class="badge ${b.ok?'':'locked'}"><div class="ico">${b.ico}</div><div><div class="bt">${b.t}</div><div class="bd">${b.d}</div></div></div>`).join('');
+}
+
+async function iniciar(){
+  document.getElementById('loading').style.display='block';
+  document.getElementById('login-area').style.display='none';
+  document.getElementById('perfil-area').style.display='none';
+  try{
+    const res=await fetch(SHEETS_URL); DADOS=await res.json();
+    if(DADOS.config&&DADOS.config.titulo)document.getElementById('logo-text').textContent=DADOS.config.titulo;
+  }catch(e){}
+  // datalist de times
+  document.getElementById('times-list').innerHTML=Object.keys(FLAGS).map(t=>`<option value="${t}">`).join('');
+
+  document.getElementById('loading').style.display='none';
+  if(!usuario){document.getElementById('login-area').style.display='block';return;}
+
+  MEU=(DADOS&&DADOS.participantes||[]).find(p=>p.nome.toLowerCase()===usuario.nome.toLowerCase());
+  if(!MEU)MEU={nome:usuario.nome,foto:usuario.foto||'',time:'',pontos:0,cravadas:0,acertos:0,aproveitamento:0,pontuados:0,rodada:{1:0,2:0,3:0}};
+
+  document.getElementById('perfil-area').style.display='block';
+  // avatar atual
+  const fotoAtual=MEU.foto||usuario.foto||'';
+  document.getElementById('av-preview').innerHTML=fotoSafe(fotoAtual)?`<img src="${fotoSafe(fotoAtual)}">`:esc(initials(usuario.nome));
+  // time atual
+  const t=MEU.time||'';
+  document.getElementById('time-cur').innerHTML=t?`${flagDe(t)} Torce pra <strong style="color:var(--text);margin-left:4px">${esc(t)}</strong>`:'Nenhum time definido ainda.';
+  document.getElementById('in-time').value=t;
+  renderResumo();
+}
+
+if(SHEETS_URL.startsWith('COLE_AQUI')){document.getElementById('loading').innerHTML='<p style="color:var(--text-muted)">Falta configurar a URL do script.</p>';}
+else{ iniciar(); }
+
+let toastT;
+function toast(msg,tipo){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(tipo||'');clearTimeout(toastT);toastT=setTimeout(()=>t.className='toast',2800);}
+</script>
+</body>
+</html>

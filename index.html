@@ -59,6 +59,12 @@ nav a:hover,nav a.active{color:var(--gold);background:rgba(255,46,154,0.08)}
 .cd-l{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
 .cd-jogo{font-size:13px;font-weight:600;margin-top:2px}
 .cd-time{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);line-height:1;letter-spacing:1px;white-space:nowrap}
+.regras{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:0 16px;margin-bottom:16px}
+.regras summary{cursor:pointer;padding:13px 0;font-size:13px;font-weight:600;color:var(--gold);list-style:none}
+.regras summary::-webkit-details-marker{display:none}
+.regras ul{margin:0 0 14px 18px;padding:0}
+.regras li{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:4px}
+.regras li strong{color:var(--text)}
 
 .filtros{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
 .chip{padding:7px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;background:var(--bg3);color:var(--text-muted);border:1px solid transparent}
@@ -120,6 +126,7 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
       <a href="home.html" class="opt">Classif.</a>
       <a href="palpites.html" class="opt">Palpites</a>
       <a href="stats.html" class="opt">Stats</a>
+      <a href="perfil.html" class="opt">Perfil</a>
     </nav>
   </div>
 </header>
@@ -151,6 +158,16 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
       </div>
       <button class="btn-sair" onclick="sair()">Sair</button>
     </div>
+
+    <details class="regras">
+      <summary>📋 Como funciona o bolão (toque pra abrir)</summary>
+      <ul>
+        <li>Você pode <strong>editar seu palpite até o jogo começar</strong>. Depois que apita, trava.</li>
+        <li>Os <strong>palpites dos outros só aparecem depois</strong> que o jogo fecha.</li>
+        <li><strong>Placar exato = 7 pontos</strong> · acertar só o vencedor/empate = <strong>3</strong> · cada gol certo de um time = <strong>+1</strong>.</li>
+        <li>A classificação <strong>vale a partir do dia 18/06</strong> (1º jogo que conta: Tchéquia × África do Sul).</li>
+      </ul>
+    </details>
 
     <div id="countdown" class="countdown" style="display:none">
       <div><div class="cd-l">Fecha em</div><div class="cd-jogo" id="cd-jogo">—</div></div>
@@ -213,7 +230,9 @@ const FLAGS = {
 };
 function flag(t,s=26){const c=FLAGS[(t||'').trim()];if(!c)return `<span style="display:inline-block;width:${s}px;text-align:center;font-size:${s-4}px">🏳️</span>`;return `<img src="https://flagcdn.com/w40/${c}.png" style="width:${s}px;height:auto;border-radius:2px">`;}
 function flagSrc(t){const c=FLAGS[(t||'').trim()];return c?`https://flagcdn.com/w80/${c}.png`:'';}
-function initials(n){const p=n.trim().split(' ');return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fotoSafe(f){f=String(f||'');return /^data:image\//.test(f)||/^https:\/\//.test(f)?f:'';}
+function initials(n){const p=String(n||'').trim().split(' ');return ((p[0][0]||'?')+(p[1]?p[1][0]:'')).toUpperCase();}
 
 let JOGOS=[], PALPITES=[], usuario=JSON.parse(localStorage.getItem('bolao_user')||'null');
 let modoAuth='login', jogoAtivo=null, filtro='pendentes', cdInterval=null;
@@ -222,12 +241,13 @@ function trocarTab(m){modoAuth=m;
   document.getElementById('tab-login').classList.toggle('active',m==='login');
   document.getElementById('tab-reg').classList.toggle('active',m==='reg');
   document.getElementById('btn-auth').textContent=m==='login'?'Entrar':'Criar conta';
-  document.getElementById('auth-hint').textContent=m==='login'?'Já tem conta? Entre com nome e PIN.':'Escolha um nome e um PIN só seu. Vai usar os dois pra palpitar.';
+  document.getElementById('auth-hint').innerHTML=m==='login'?'Já tem conta? Entre com nome e PIN.':'Escolha um nome e um PIN só seu (4+ dígitos).<br><strong style="color:var(--gold)">⚠️ Use um PIN simples só deste bolão</strong> — nunca a senha do seu banco, e-mail ou redes sociais.';
 }
+function nomeOk(n){return n.length>=2 && n.length<=24 && !/[<>"'`\\]/.test(n);}
 async function enviarAuth(){
   const nome=document.getElementById('in-nome').value.trim();
   const pin=document.getElementById('in-pin').value.trim();
-  if(!nome){toast('Digite seu nome.','error');return;}
+  if(!nomeOk(nome)){toast('Nome inválido: use de 2 a 24 caracteres, sem símbolos.','error');return;}
   if(pin.length<4){toast('PIN precisa de pelo menos 4 dígitos.','error');return;}
   const btn=document.getElementById('btn-auth');btn.disabled=true;btn.textContent='...';
   const r=await post({action:modoAuth==='login'?'login':'registrar',nome,pin});
@@ -264,7 +284,7 @@ function renderLogado(){
   document.getElementById('logged-area').style.display='block';
   document.getElementById('user-nome').textContent=usuario.nome;
   const av=document.getElementById('user-avatar');
-  av.innerHTML=usuario.foto?`<img src="${usuario.foto}">`:initials(usuario.nome);
+  av.innerHTML=(fotoSafe(usuario.foto)?`<img src="${fotoSafe(usuario.foto)}">`:esc(initials(usuario.nome)));
   renderJogos();
   if(cdInterval)clearInterval(cdInterval);
   cdInterval=setInterval(atualizarContagem,1000);
@@ -290,9 +310,9 @@ function cardJogo(j){
   return `<div class="jogo-card ${clik?'clik':''}" ${clik?`onclick="abrirModal(${j.num})"`:''}>
     <div class="jogo-top"><span class="jogo-meta">Jogo ${j.num} · R${j.rodada} · ${j.data} · ${j.hora}</span>${statusHtml}</div>
     <div class="jogo-times">
-      <div class="time t1">${flag(j.time1)}<span class="time-nome">${j.time1}</span></div>
+      <div class="time t1">${flag(j.time1)}<span class="time-nome">${esc(j.time1)}</span></div>
       <span class="jogo-vs">×</span>
-      <div class="time t2">${flag(j.time2)}<span class="time-nome">${j.time2}</span></div>
+      <div class="time t2">${flag(j.time2)}<span class="time-nome">${esc(j.time2)}</span></div>
     </div>${palpiteHtml}</div>`;
 }
 

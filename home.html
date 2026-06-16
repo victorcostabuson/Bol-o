@@ -73,6 +73,16 @@ nav a.nav-bolao{border:1px solid var(--border);color:var(--gold)}
 .rod-card .r-pts{font-size:11px;color:var(--gold)}
 .rod-card.vazia{opacity:.5}
 
+/* DESTAQUES */
+.dest-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px}
+.dest-ico{font-size:30px;line-height:1}
+.dest-info{min-width:0}
+.dest-tit{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.dest-win{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600}
+.dest-av{width:30px;height:30px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--gold);font-size:11px;font-family:'Oswald',sans-serif;overflow:hidden;flex-shrink:0}
+.dest-av img{width:100%;height:100%;object-fit:cover}
+.dest-val{font-size:11px;color:var(--gold);margin-top:3px}
+
 /* GRÁFICO */
 .chart-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px 14px}
 .chart-wrap svg{width:100%;height:auto;display:block}
@@ -97,6 +107,7 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
       <a href="index.html" class="nav-bolao">⚽ Bolão</a>
       <a href="palpites.html" class="nav-opt">🎯 Palpites</a>
       <a href="stats.html" class="nav-opt">📊 Stats</a>
+      <a href="perfil.html" class="nav-opt">👤 Perfil</a>
     </nav>
   </div>
 </header>
@@ -119,6 +130,9 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
     <div class="sec-head" style="margin-top:30px"><div class="sec-title">Campeão de cada rodada</div></div>
     <div class="rod-grid" id="rodadas"></div>
 
+    <div class="sec-head" style="margin-top:30px"><div class="sec-title">Destaques da galera</div></div>
+    <div class="rod-grid" id="destaques"></div>
+
     <div class="sec-head" style="margin-top:30px"><div class="sec-title">Evolução dos pontos</div></div>
     <div class="chart-wrap">
       <div id="chart"></div>
@@ -129,13 +143,17 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
 </div>
 <footer>Bolão Shuriks · <strong style="color:var(--gold)">feito com Claude</strong></footer>
 
+<script src="medals.js"></script>
 <script>
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyr5fXwBeGQKntrZv4L6WjkCSCYG5d3rlIrV85_i_wO_VZpb-SVhRmub7aVYCj0KPMDtA/exec';
-function initials(n){const p=n.trim().split(' ');return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
-function nomeCurto(n){const p=n.trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
-function av(p,cls){return p.foto?`<img src="${p.foto}">`:initials(p.nome);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fotoSafe(f){f=String(f||'');return /^data:image\//.test(f)||/^https:\/\//.test(f)?f:'';}
+function initials(n){const p=String(n||'').trim().split(' ');return ((p[0][0]||'?')+(p[1]?p[1][0]:'')).toUpperCase();}
+function nomeCurto(n){const p=String(n||'').trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
+function nc(n){return esc(nomeCurto(n));}
+function av(p){const f=fotoSafe(p.foto);return f?`<img src="${f}">`:esc(initials(p.nome));}
 
-let PARTICIPANTES=[];
+let PARTICIPANTES=[], PALPITES=[], JOGOS=[], CUTOFF=1;
 
 function render(){
   const lista = PARTICIPANTES;
@@ -147,7 +165,7 @@ function render(){
     return `<div class="pod p${idx+1}">
       <div class="medal">${medals[idx]}</div>
       <div class="av">${av(p)}</div>
-      <div class="nome">${nomeCurto(p.nome)}</div>
+      <div class="nome">${nc(p.nome)}</div>
       <div class="pts">${p.pontos}</div>
     </div>`;
   }).join('');
@@ -157,13 +175,29 @@ function render(){
     <div class="row p${i+1}">
       <div class="pos">${medals[i]||(i+1)+'º'}</div>
       <div class="avatar">${av(p)}</div>
-      <div class="nome">${nomeCurto(p.nome)}<small>${p.cravadas||0} cravada(s) · ${p.aproveitamento||0}% aprov.</small></div>
+      <div class="nome">${nc(p.nome)}<small>${p.cravadas||0} cravada(s) · ${p.aproveitamento||0}% aprov.</small></div>
       <div class="pts-wrap"><div class="pts">${p.pontos}</div><div class="pts-lbl">pontos</div></div>
     </div>`).join('');
   document.getElementById('sec-info').textContent = lista.length+' participantes';
 
   renderRodadas(lista);
   renderChart(lista);
+  renderDestaques(lista);
+}
+
+function renderDestaques(lista){
+  if(typeof calcularDestaques!=='function'){return;}
+  const ctx=buildMedalCtx(lista,PALPITES,JOGOS,CUTOFF);
+  const dest=calcularDestaques(lista,PALPITES,JOGOS,ctx);
+  const el=document.getElementById('destaques');
+  if(!dest.length){el.innerHTML='<div class="empty">Os destaques aparecem conforme a galera for palpitando e pontuando.</div>';return;}
+  el.innerHTML=dest.map(d=>{
+    const fav={foto:d.foto,nome:d.nome};
+    return `<div class="dest-card"><div class="dest-ico">${d.ico}</div>
+      <div class="dest-info"><div class="dest-tit">${esc(d.titulo)}</div>
+        <div class="dest-win"><div class="dest-av">${av(fav)}</div><span>${nc(d.nome)}</span></div>
+        <div class="dest-val">${esc(d.valor)}</div></div></div>`;
+  }).join('');
 }
 
 function renderRodadas(lista){
@@ -174,7 +208,7 @@ function renderRodadas(lista){
     if(melhor){
       out.push(`<div class="rod-card"><div class="r-lbl">Rodada ${r}</div>
         <div class="r-win"><div class="r-av">${av(melhor.p)}</div>
-        <div><div class="r-nome">${nomeCurto(melhor.p.nome)}</div><div class="r-pts">${melhor.v} pts na rodada</div></div></div></div>`);
+        <div><div class="r-nome">${nc(melhor.p.nome)}</div><div class="r-pts">${melhor.v} pts na rodada</div></div></div></div>`);
     } else {
       out.push(`<div class="rod-card vazia"><div class="r-lbl">Rodada ${r}</div><div class="r-win"><div class="r-nome" style="color:var(--text-muted)">Ainda sem pontos</div></div></div>`);
     }
@@ -203,7 +237,7 @@ function renderChart(lista){
     const pts=[0,1,2,3].map(r=>{const v=r===0?0:(p.acumulado[r]||0);return `${xs(r)},${ys(v)}`;}).join(' ');
     svg+=`<polyline points="${pts}" fill="none" stroke="${cor}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
     [0,1,2,3].forEach(r=>{const v=r===0?0:(p.acumulado[r]||0);svg+=`<circle cx="${xs(r)}" cy="${ys(v)}" r="2.6" fill="${cor}"/>`;});
-    legend.push(`<span><i style="background:${cor}"></i>${nomeCurto(p.nome)}</span>`);
+    legend.push(`<span><i style="background:${cor}"></i>${nc(p.nome)}</span>`);
   });
   svg+='</svg>';
   document.getElementById('chart').innerHTML=svg;
@@ -214,6 +248,7 @@ async function carregar(){
   try{
     const res=await fetch(SHEETS_URL); const d=await res.json();
     PARTICIPANTES=(d.participantes||[]).slice().sort((a,b)=>b.pontos-a.pontos);
+    PALPITES=d.palpites||[]; JOGOS=d.jogos||[]; CUTOFF=d.cutoff||1;
     if(d.config&&d.config.titulo){document.getElementById('hero-title').textContent=d.config.titulo;document.getElementById('logo-text').textContent=d.config.titulo;}
     document.getElementById('loading').style.display='none';
     document.getElementById('conteudo').style.display='block';

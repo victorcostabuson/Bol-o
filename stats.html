@@ -95,6 +95,7 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
       <a href="index.html" class="nav-bolao">⚽ Bolão</a>
       <a href="palpites.html" class="nav-opt">🎯 Palpites</a>
       <a href="stats.html" class="active">📊 Stats</a>
+      <a href="perfil.html" class="nav-opt">👤 Perfil</a>
     </nav>
   </div>
 </header>
@@ -128,11 +129,14 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
 </div>
 <footer>Bolão Shuriks · <strong style="color:var(--gold)">feito com Claude</strong></footer>
 
+<script src="medals.js"></script>
 <script>
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyr5fXwBeGQKntrZv4L6WjkCSCYG5d3rlIrV85_i_wO_VZpb-SVhRmub7aVYCj0KPMDtA/exec';
-function initials(n){const p=n.trim().split(' ');return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
-function nomeCurto(n){const p=n.trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
-function avHtml(p){return p.foto?`<img src="${p.foto}">`:initials(p.nome);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fotoSafe(f){f=String(f||'');return /^data:image\//.test(f)||/^https:\/\//.test(f)?f:'';}
+function initials(n){const p=String(n||'').trim().split(' ');return ((p[0][0]||'?')+(p[1]?p[1][0]:'')).toUpperCase();}
+function nomeCurto(n){const p=String(n||'').trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
+function avHtml(p){const f=fotoSafe(p.foto);return f?`<img src="${f}">`:esc(initials(p.nome));}
 
 let PARTICIPANTES=[], PALPITES=[], JOGOS=[];
 
@@ -145,18 +149,7 @@ function trocar(t){
 
 function posDe(nome){return PARTICIPANTES.findIndex(p=>p.nome===nome)+1;}
 
-// ── CONQUISTAS ──
-function conquistas(p){
-  const lider = posDe(p.nome)===1 && p.pontos>0;
-  return [
-    {ok:p.cravadas>0,    ico:'🔮', t:'Nostradamus', d:'Cravou um placar exato'},
-    {ok:p.cravadas>=3,   ico:'🎯', t:'Vidente',     d:'3+ placares cravados'},
-    {ok:lider,           ico:'👑', t:'Líder',       d:'Está em 1º lugar'},
-    {ok:p.aproveitamento>=50, ico:'🔥', t:'Pé-quente', d:'50%+ de aproveitamento'},
-    {ok:p.pontuados>=8,  ico:'🏃', t:'Maratonista', d:'Palpitou em 8+ jogos válidos'},
-    {ok:p.pontuados>=5&&p.pontos===0, ico:'🥶', t:'Pé-frio', d:'5+ jogos e 0 ponto'},
-  ];
-}
+let CTX=null;
 
 // ── PERFIL ──
 function renderPerfil(){
@@ -168,13 +161,14 @@ function renderPerfil(){
   const barras=[1,2,3].map(r=>`<div class="bar-row"><div class="bl">Rodada ${r}</div>
     <div class="bar-track"><div class="bar-fill" style="width:${Math.round((rod[r]/maxR)*100)}%"></div></div>
     <div class="bv">${rod[r]} pts</div></div>`).join('');
-  const cq=conquistas(p).map(b=>`<div class="badge ${b.ok?'':'locked'}"><div class="ico">${b.ico}</div>
+  const meds=(CTX?calcularMedalhas(p,CTX):[]).slice().sort((a,b)=>(b.ok?1:0)-(a.ok?1:0));
+  const cq=meds.map(b=>`<div class="badge ${b.ok?'':'locked'}"><div class="ico">${b.ico}</div>
     <div><div class="bt">${b.t}</div><div class="bd">${b.d}</div></div></div>`).join('');
 
   document.getElementById('perfil').innerHTML=`
     <div class="profile-head">
       <div class="ph-av">${avHtml(p)}</div>
-      <div><div class="ph-nome">${nomeCurto(p.nome)}</div><div class="ph-pos">${posDe(p.nome)}º lugar no bolão</div></div>
+      <div><div class="ph-nome">${esc(nomeCurto(p.nome))}</div><div class="ph-pos">${posDe(p.nome)}º lugar no bolão</div></div>
     </div>
     <div class="stat-grid">
       <div class="stat"><div class="v">${p.pontos}</div><div class="l">Pontos</div></div>
@@ -214,9 +208,9 @@ function renderVS(){
   document.getElementById('vs').innerHTML=`
     <div class="vs-board">
       <div class="vs-top">
-        <div class="vs-p"><div class="av">${avHtml(A)}</div><div class="nm">${nomeCurto(A.nome)}</div></div>
+        <div class="vs-p"><div class="av">${avHtml(A)}</div><div class="nm">${esc(nomeCurto(A.nome))}</div></div>
         <div class="vs-mid"><div class="vs-score">${vitA} - ${vitB}</div><div class="vlbl">rivalidade</div></div>
-        <div class="vs-p"><div class="av">${avHtml(B)}</div><div class="nm">${nomeCurto(B.nome)}</div></div>
+        <div class="vs-p"><div class="av">${avHtml(B)}</div><div class="nm">${esc(nomeCurto(B.nome))}</div></div>
       </div>
       ${linha('Pontos',A.pontos,B.pontos)}
       ${linha('Cravadas',A.cravadas||0,B.cravadas||0)}
@@ -227,7 +221,7 @@ function renderVS(){
 }
 
 function preencherSelects(){
-  const opts=PARTICIPANTES.map(p=>`<option value="${p.nome.replace(/"/g,'&quot;')}">${nomeCurto(p.nome)}</option>`).join('');
+  const opts=PARTICIPANTES.map(p=>`<option value="${esc(p.nome)}">${esc(nomeCurto(p.nome))}</option>`).join('');
   document.getElementById('sel-perfil').innerHTML=opts;
   document.getElementById('sel-a').innerHTML=opts;
   document.getElementById('sel-b').innerHTML=opts;
@@ -239,6 +233,7 @@ async function carregar(){
     const res=await fetch(SHEETS_URL); const d=await res.json();
     PARTICIPANTES=(d.participantes||[]).slice().sort((a,b)=>b.pontos-a.pontos);
     PALPITES=d.palpites||[]; JOGOS=d.jogos||[];
+    CTX=buildMedalCtx(PARTICIPANTES,PALPITES,JOGOS,d.cutoff||1);
     if(d.config&&d.config.titulo)document.getElementById('logo-text').textContent=d.config.titulo;
     document.getElementById('loading').style.display='none';
     if(!PARTICIPANTES.length){document.getElementById('conteudo').innerHTML='<div class="empty">Ainda não há participantes cadastrados.</div>';document.getElementById('conteudo').style.display='block';return;}
