@@ -65,6 +65,12 @@ nav a:hover,nav a.active{color:var(--gold);background:rgba(255,46,154,0.08)}
 .regras ul{margin:0 0 14px 18px;padding:0}
 .regras li{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:4px}
 .regras li strong{color:var(--text)}
+.ao-vivo-sec{margin-bottom:8px}
+.jogo-card.vivo{border-color:rgba(224,48,48,.5);background:linear-gradient(135deg,rgba(224,48,48,.06),var(--bg2))}
+.vivo-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:3px 9px;border-radius:20px;background:rgba(224,48,48,.16);color:#ff6b6b}
+.vivo-dot{width:7px;height:7px;border-radius:50%;background:#e03030;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.8)}}
+.placar-vivo{font-family:'Bebas Neue',sans-serif;font-size:30px;color:#fff;letter-spacing:1px;white-space:nowrap;text-align:center}
 
 .filtros{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
 .chip{padding:7px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;background:var(--bg3);color:var(--text-muted);border:1px solid transparent}
@@ -81,6 +87,7 @@ nav a:hover,nav a.active{color:var(--gold);background:rgba(255,46,154,0.08)}
 .st-aberto{background:rgba(34,197,94,0.12);color:var(--green)}
 .st-feito{background:rgba(255,46,154,0.12);color:var(--gold)}
 .st-fechado{background:rgba(136,146,164,0.12);color:var(--text-muted)}
+.st-confirmar{background:rgba(245,180,40,0.14);color:#f5c453}
 .jogo-times{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
 .time{display:flex;align-items:center;gap:8px;min-width:0}
 .time.t2{flex-direction:row-reverse;text-align:right}
@@ -114,7 +121,7 @@ nav a:hover,nav a.active{color:var(--gold);background:rgba(255,46,154,0.08)}
 .toast.error{border-color:var(--red);color:#ffb4b4}
 .toast.ok{border-color:var(--green);color:#b4ffc4}
 footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-size:12px;color:var(--text-dim)}
-@media(max-width:520px){nav a.opt{display:none}.time-nome{font-size:13px}}
+@media(max-width:520px){.header-inner{height:auto;flex-wrap:wrap;padding:8px 16px;row-gap:6px}nav{width:100%;justify-content:space-between;gap:3px;overflow-x:auto}nav a{padding:6px 6px;font-size:10.5px;white-space:nowrap}.time-nome{font-size:13px}}
 </style>
 </head>
 <body>
@@ -168,6 +175,8 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
         <li>A classificação <strong>vale a partir do dia 18/06</strong> (1º jogo que conta: Tchéquia × África do Sul).</li>
       </ul>
     </details>
+
+    <div id="ao-vivo-sec" class="ao-vivo-sec"></div>
 
     <div id="countdown" class="countdown" style="display:none">
       <div><div class="cd-l">Fecha em</div><div class="cd-jogo" id="cd-jogo">—</div></div>
@@ -264,14 +273,15 @@ function sair(){usuario=null;localStorage.removeItem('bolao_user');
   document.getElementById('in-nome').value='';document.getElementById('in-pin').value='';
 }
 
+let jaCarregou=false;
 async function carregar(){
   try{
     const res=await fetch(SHEETS_URL); const d=await res.json();
     JOGOS=d.jogos||[]; PALPITES=d.palpites||[];
     if(d.config&&d.config.titulo){document.getElementById('hero-title').textContent=d.config.titulo;document.getElementById('logo-text').textContent=d.config.titulo;}
-    setLive(true);
+    jaCarregou=true; setLive(true);
     if(usuario){renderJogos();atualizarContagem();}
-  }catch(e){setLive(false);console.warn(e);}
+  }catch(e){if(!jaCarregou)setLive(false);console.warn(e);}
 }
 function setLive(ok){document.querySelector('.live-dot').style.background=ok?'#22c55e':'#e03030';document.getElementById('live-text').textContent=ok?'Sincronizado':'Offline';}
 async function post(body){
@@ -303,8 +313,12 @@ function cardJogo(j){
     else{statusHtml='<span class="jogo-status st-aberto">Aberto</span>';clik=true;}
   }else{
     const fim=(j.placar1!==null&&j.placar2!==null);
-    statusHtml=`<span class="jogo-status st-fechado">${fim?'Encerrado':'Fechado'}</span>`;
-    const placar=fim?` · ${j.placar1} × ${j.placar2}`:'';
+    if(fim && !j.confirmado){
+      statusHtml='<span class="jogo-status st-confirmar">⏳ A confirmar</span>';
+    }else{
+      statusHtml=`<span class="jogo-status st-fechado">${fim?'Encerrado':'Fechado'}</span>`;
+    }
+    const placar=fim?` · ${j.placar1} × ${j.placar2}${(fim&&!j.confirmado)?' (a confirmar)':''}`:'';
     if(mp)palpiteHtml=`<div class="jogo-meu-palpite">Seu palpite: ${mp.gol1} × ${mp.gol2}${placar}</div>`;
   }
   return `<div class="jogo-card ${clik?'clik':''}" ${clik?`onclick="abrirModal(${j.num})"`:''}>
@@ -326,11 +340,29 @@ function renderJogos(){
   let lista;
   if(filtro==='pendentes') lista=pendentes;
   else if(filtro==='abertos') lista=abertos;
-  else lista=JOGOS.filter(j=>!j.aberto);
+  else lista=JOGOS.filter(j=>!j.aberto && j.status!=='ao vivo');
   if(rod) lista=lista.filter(j=>j.rodada===rod);
 
   const vazio={pendentes:'Você está em dia! Nenhum palpite pendente. 🎉',abertos:'Nenhum jogo aberto agora.',fechados:'Nenhum jogo encerrado ainda.'}[filtro];
   document.getElementById('lista-jogos').innerHTML = lista.length?lista.map(cardJogo).join(''):`<div class="empty">${vazio}</div>`;
+  renderAoVivo();
+}
+
+function renderAoVivo(){
+  const vivos=JOGOS.filter(j=>j.status==='ao vivo');
+  const el=document.getElementById('ao-vivo-sec');
+  if(!vivos.length){el.innerHTML='';return;}
+  el.innerHTML='<div class="sec-title" style="color:#ff6b6b">🔴 Ao vivo agora</div>'+vivos.map(j=>{
+    const s1=j.vivo1==null?0:j.vivo1, s2=j.vivo2==null?0:j.vivo2;
+    const min=j.minuto?(/^\d+$/.test(j.minuto)?j.minuto+"'":esc(j.minuto)):'';
+    return `<div class="jogo-card vivo">
+      <div class="jogo-top"><span class="jogo-meta">Jogo ${j.num} · R${j.rodada}</span><span class="vivo-badge"><span class="vivo-dot"></span>Ao vivo ${min}</span></div>
+      <div class="jogo-times">
+        <div class="time t1">${flag(j.time1)}<span class="time-nome">${esc(j.time1)}</span></div>
+        <span class="placar-vivo">${s1} × ${s2}</span>
+        <div class="time t2">${flag(j.time2)}<span class="time-nome">${esc(j.time2)}</span></div>
+      </div></div>`;
+  }).join('');
 }
 
 function atualizarContagem(){
@@ -381,9 +413,9 @@ function toast(msg,tipo){const t=document.getElementById('toast');t.textContent=
 
 (async function(){
   if(SHEETS_URL.startsWith('COLE_AQUI')){document.getElementById('live-text').textContent='Falta configurar a URL do script';return;}
+  if(usuario)renderLogado();   // mostra a área logada NA HORA (sem flash de login no celular)
   await carregar();
-  if(usuario)renderLogado();
-  setInterval(carregar,60000);
+  setInterval(carregar,30000);
 })();
 </script>
 </body>
