@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Início — Bolão Shuriks</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#FF2E9A;--gold-light:#FF6FC0;--gold-dark:#C01878;
+  --bg:#0a0c10;--bg2:#12151c;--bg3:#1a1e28;--bg4:#222738;
+  --border:rgba(255,46,154,0.18);--border-strong:rgba(255,46,154,0.4);
+  --text:#f0f0f0;--text-muted:#8892a4;--text-dim:#555f72;--green:#22c55e;--red:#e03030;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+.site-header{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-inner{max-width:920px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:58px}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo-img{width:38px;height:38px;border-radius:50%;object-fit:cover}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--gold)}
+nav{display:flex;gap:2px;flex-wrap:wrap;justify-content:flex-end}
+nav a{color:var(--text-muted);text-decoration:none;font-size:11px;font-weight:600;padding:6px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.4px}
+nav a:hover,nav a.active{color:var(--gold);background:rgba(255,46,154,0.08)}
+nav a.nav-bolao{border:1px solid var(--border);color:var(--gold)}
+.main{max-width:920px;margin:0 auto;padding:20px 16px 60px}
+
+/* HERO mini-carta */
+.hero-card{display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,rgba(255,46,154,.14),var(--bg2));border:1px solid var(--border-strong);border-radius:18px;padding:18px 20px;margin-bottom:18px;box-shadow:0 0 30px rgba(255,46,154,.1)}
+.hero-av{width:64px;height:64px;border-radius:14px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;color:var(--gold);font-size:24px;overflow:hidden;border:2px solid var(--gold);flex-shrink:0;cursor:pointer}
+.hero-av img{width:100%;height:100%;object-fit:cover}
+.hero-id{flex:1;min-width:0}
+.hero-ola{font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
+.hero-nome{font-family:'Oswald',sans-serif;font-size:24px;font-weight:600;line-height:1.05}
+.hero-sub{font-size:13px;color:var(--gold-light);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.hero-sub .fl{width:16px;border-radius:2px;vertical-align:-2px}
+.hero-pts{text-align:center;flex-shrink:0}
+.hero-pts b{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--gold);line-height:.9;display:block}
+.hero-pts span{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
+
+/* CTA palpites */
+.cta{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+.cta.alerta{border-color:var(--border-strong);background:linear-gradient(135deg,rgba(255,46,154,.1),var(--bg2))}
+.cta-txt{font-size:14px}
+.cta-txt b{font-family:'Oswald',sans-serif;font-size:17px;color:var(--gold)}
+.cta-btn{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#15110a;border:none;border-radius:10px;padding:11px 18px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;text-decoration:none;white-space:nowrap;font-family:'Inter',sans-serif}
+
+/* GRID de tiles */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tile{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:15px;cursor:pointer;transition:border-color .15s,transform .15s,box-shadow .15s;min-height:120px;display:flex;flex-direction:column}
+.tile:hover{border-color:var(--border-strong);transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.tile-h{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:auto}
+.tile-h .ico{font-size:15px}
+.tile-big{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--gold);line-height:1;margin-top:8px}
+.tile-big small{font-size:16px;color:var(--text-muted)}
+.tile-sub{font-size:12px;color:var(--text-muted);margin-top:3px}
+.tile-full{grid-column:1 / -1}
+.mini-pod{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.mini-row{display:flex;align-items:center;gap:8px;font-size:13px}
+.mini-row .mp{font-size:14px;width:20px}
+.mini-row .mn{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-row .mpt{font-family:'Bebas Neue',sans-serif;color:var(--gold);font-size:18px}
+.tile-vivo{border-color:rgba(224,48,48,.4)}
+.vivo-badge{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:700;color:#ff6b6b}
+.vivo-dot{width:6px;height:6px;border-radius:50%;background:#e03030;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.vivo-score{font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fff;margin-top:6px}
+.cd-num{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);line-height:1;margin-top:8px}
+.dest-mini{font-size:13px;margin-top:8px;line-height:1.5}
+.dest-mini b{color:var(--text)}
+.spark{margin-top:10px}
+.fl{width:18px;border-radius:2px}
+
+/* MODAL genérico */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:5vh 14px;overflow-y:auto}
+.modal.open{display:flex}
+.modal-card{background:var(--bg2);border:1px solid var(--border-strong);border-radius:18px;width:100%;max-width:480px;padding:22px;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+.modal-x{position:absolute;top:12px;right:14px;background:var(--bg4);border:none;color:var(--text);width:32px;height:32px;border-radius:50%;font-size:20px;cursor:pointer;line-height:1;z-index:2}
+.m-titulo{font-family:'Oswald',sans-serif;font-size:18px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-right:30px}
+
+/* Carta do perfil */
+.pf-top{display:flex;gap:16px;margin-bottom:18px;padding-right:26px}
+.pf-carta{width:142px;flex-shrink:0;border-radius:14px;padding:10px;text-align:center;background:linear-gradient(160deg,rgba(255,46,154,.16),rgba(26,10,20,.6)),var(--bg3);border:2px solid var(--gold);box-shadow:0 0 26px rgba(255,46,154,.22),inset 0 1px 0 rgba(255,111,192,.25)}
+.pf-carta-top{display:flex;justify-content:space-between;align-items:center;height:26px;margin-bottom:6px}
+.pf-carta-pos{font-family:'Bebas Neue',sans-serif;font-size:23px;color:var(--gold);line-height:1}
+.pf-carta-flag img{width:27px;border-radius:2px;display:block}
+.pf-carta-foto{width:100%;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--bg4);display:flex;align-items:center;justify-content:center;border:1px solid var(--border-strong)}
+.pf-carta-foto img{width:100%;height:100%;object-fit:cover}
+.pf-carta-foto .ini{font-family:'Oswald',sans-serif;font-weight:700;font-size:44px;color:var(--gold)}
+.pf-carta-stars{color:var(--gold-light);font-size:12px;letter-spacing:3px;margin:7px 0 1px}
+.pf-carta-nome{font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.4px;line-height:1.15;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pf-carta-pts{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);line-height:1;margin-top:2px}
+.pf-carta-pts span{font-size:12px;color:var(--text-muted);letter-spacing:1px}
+.pf-side{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
+.pf-pos{font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.pf-time{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:5px;margin-bottom:12px}
+.pf-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.pf-st{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center}
+.pf-st b{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--text);display:block;line-height:1}
+.pf-st span{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}
+.pf-sec{font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin:0 0 10px}
+.pf-lista{display:flex;flex-direction:column;gap:8px;max-height:42vh;overflow-y:auto}
+.pf-jogo{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.pf-jt{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;margin-bottom:5px}
+.pf-jt .fl{width:18px}.pf-jt em{color:var(--text-dim);font-style:normal;margin:0 2px}
+.pf-info{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:var(--text-muted);flex-wrap:wrap}
+.pf-info strong{color:var(--text)}
+.bdg{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.bdg.ok{background:rgba(34,197,94,.15);color:#5fe08a}
+.bdg.meio{background:rgba(255,46,154,.15);color:var(--gold-light)}
+.bdg.zero{background:rgba(136,146,164,.15);color:var(--text-muted)}
+.bdg.cf,.bdg.ag{background:rgba(245,180,40,.14);color:#f5c453}
+.pf-vazio{font-size:13px;color:var(--text-muted);text-align:center;padding:20px;line-height:1.5}
+
+/* Medalhas / Destaques no modal */
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:9px;max-height:60vh;overflow-y:auto}
+.badge{background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:12px;display:flex;align-items:center;gap:9px}
+.badge.locked{opacity:.35;filter:grayscale(.6)}
+.badge .ico{font-size:23px;line-height:1}
+.badge .bt{font-size:12px;font-weight:600}
+.badge .bd{font-size:10px;color:var(--text-muted);margin-top:1px;line-height:1.25}
+.dest-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:13px;display:flex;align-items:center;gap:12px;margin-bottom:9px}
+.dest-ico{font-size:28px}.dest-info{min-width:0}
+.dest-tit{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.dest-win{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600}
+.dest-val{font-size:11px;color:var(--gold);margin-top:2px}
+
+/* Login */
+.auth{max-width:380px;margin:8vh auto 0}
+.auth-logo{width:80px;height:80px;border-radius:50%;display:block;margin:0 auto 10px;filter:drop-shadow(0 0 24px rgba(255,46,154,.4))}
+.auth-title{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:3px;color:var(--gold);text-align:center;margin-bottom:4px}
+.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:22px;margin-top:16px}
+.auth-tabs{display:flex;gap:8px;margin-bottom:16px}
+.auth-tab{flex:1;text-align:center;padding:10px;border-radius:10px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;cursor:pointer;background:var(--bg3);color:var(--text-muted);border:1px solid transparent}
+.auth-tab.active{background:rgba(255,46,154,0.1);color:var(--gold);border-color:var(--border-strong)}
+.field{margin-bottom:12px}
+.field label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:6px}
+.field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:15px;outline:none}
+.field input:focus{border-color:var(--border-strong)}
+.btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#15110a;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;font-family:'Inter',sans-serif}
+.auth-hint{font-size:12px;color:var(--text-muted);text-align:center;margin-top:10px;line-height:1.5}
+
+.loading{text-align:center;padding:60px;color:var(--text-muted)}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg4);border:1px solid var(--border);color:var(--text);padding:13px 20px;border-radius:10px;font-size:14px;z-index:300;opacity:0;transition:all .25s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{border-color:var(--red);color:#ffb4b4}
+.sair-link{display:block;text-align:center;color:var(--text-dim);font-size:12px;margin-top:22px;cursor:pointer;text-decoration:underline}
+footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-size:12px;color:var(--text-dim)}
+@media(max-width:520px){
+  .header-inner{height:auto;flex-wrap:wrap;padding:8px 16px;row-gap:6px}
+  nav{width:100%;justify-content:space-between;gap:3px;overflow-x:auto}
+  nav a{padding:6px 6px;font-size:10.5px;white-space:nowrap}
+  .pf-top{flex-direction:column;align-items:center;padding-right:0}
+  .pf-carta{width:165px}.pf-side{width:100%}.pf-pos,.pf-time{text-align:center;justify-content:center}
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="inicio.html"><img class="logo-img" src="shuriks-logo.png" alt="Shuriks"><div class="logo-text" id="logo-text">Bolão Shuriks</div></a>
+    <nav>
+      <a href="inicio.html" class="active">🏠 Início</a>
+      <a href="index.html" class="nav-bolao">⚽ Bolão</a>
+      <a href="home.html" class="nav-opt">Classif.</a>
+      <a href="palpites.html" class="nav-opt">🎯 Palpites</a>
+      <a href="stats.html" class="nav-opt">📊 Stats</a>
+      <a href="perfil.html" class="nav-opt">👤 Perfil</a>
+    </nav>
+  </div>
+</header>
+
+<div class="main">
+  <div id="loading" class="loading"><div class="spinner"></div>Carregando...</div>
+
+  <!-- LOGIN -->
+  <div id="login-area" class="auth" style="display:none">
+    <img class="auth-logo" src="shuriks-logo.png" alt="Shuriks">
+    <div class="auth-title">Bolão Shuriks</div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tab-login" onclick="trocarTab('login')">Entrar</div>
+        <div class="auth-tab" id="tab-reg" onclick="trocarTab('reg')">Criar conta</div>
+      </div>
+      <div class="field"><label>Seu nome</label><input id="in-nome" placeholder="Ex: João Silva" autocomplete="off"></div>
+      <div class="field"><label>PIN</label><input id="in-pin" type="password" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
+      <button class="btn" id="btn-auth" onclick="enviarAuth()">Entrar</button>
+      <div class="auth-hint" id="auth-hint">Entre com seu nome e PIN pra ver seu painel.</div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash" style="display:none">
+    <div class="hero-card">
+      <div class="hero-av" id="hero-av" onclick="abrirMeuPerfil()">?</div>
+      <div class="hero-id">
+        <div class="hero-ola">Bem-vindo de volta</div>
+        <div class="hero-nome" id="hero-nome">—</div>
+        <div class="hero-sub" id="hero-sub"></div>
+      </div>
+      <div class="hero-pts"><b id="hero-pts">0</b><span>pontos</span></div>
+    </div>
+
+    <div id="cta-palpites"></div>
+
+    <div class="grid">
+      <div class="tile" onclick="abrirMeuPerfil()">
+        <div class="tile-h"><span class="ico">🏅</span> Minha posição</div>
+        <div class="tile-big" id="t-pos">—</div>
+        <div class="tile-sub" id="t-pos-sub">toque pra ver seu perfil</div>
+      </div>
+      <div class="tile" onclick="location.href='home.html'">
+        <div class="tile-h"><span class="ico">🏆</span> Top 3 do bolão</div>
+        <div class="mini-pod" id="t-top3"></div>
+      </div>
+      <div class="tile" id="t-vivo-tile" onclick="cliqueVivo()">
+        <div class="tile-h" id="t-vivo-h"><span class="ico">⏱️</span> Próximo jogo</div>
+        <div id="t-vivo"></div>
+      </div>
+      <div class="tile" onclick="abrirMedalhas()">
+        <div class="tile-h"><span class="ico">🎖️</span> Minhas medalhas</div>
+        <div class="tile-big" id="t-med">—</div>
+        <div class="tile-sub" id="t-med-sub"></div>
+      </div>
+      <div class="tile tile-full" onclick="abrirDestaques()">
+        <div class="tile-h"><span class="ico">😂</span> Destaques da galera</div>
+        <div class="dest-mini" id="t-dest"></div>
+      </div>
+      <div class="tile tile-full" onclick="location.href='home.html'">
+        <div class="tile-h"><span class="ico">📊</span> Minha evolução</div>
+        <div class="spark" id="t-spark"></div>
+      </div>
+    </div>
+
+    <span class="sair-link" onclick="sair()">Sair desta conta</span>
+  </div>
+</div>
+
+<!-- MODAIS -->
+<div class="modal" id="modal-perfil" onclick="fecharModal(event,'modal-perfil')">
+  <div class="modal-card"><button class="modal-x" onclick="fecharModal(event,'modal-perfil',1)">×</button><div id="pf-corpo"></div></div>
+</div>
+<div class="modal" id="modal-med" onclick="fecharModal(event,'modal-med')">
+  <div class="modal-card"><button class="modal-x" onclick="fecharModal(event,'modal-med',1)">×</button><div class="m-titulo" id="med-titulo">Minhas medalhas</div><div class="badges" id="med-corpo"></div></div>
+</div>
+<div class="modal" id="modal-dest" onclick="fecharModal(event,'modal-dest')">
+  <div class="modal-card"><button class="modal-x" onclick="fecharModal(event,'modal-dest',1)">×</button><div class="m-titulo">Destaques da galera</div><div id="dest-corpo"></div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<footer>Bolão Shuriks · <strong style="color:var(--gold)">feito com Claude</strong></footer>
+
+<script src="medals.js"></script>
+<script>
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyr5fXwBeGQKntrZv4L6WjkCSCYG5d3rlIrV85_i_wO_VZpb-SVhRmub7aVYCj0KPMDtA/exec';
+const FLAGS={'México':'mx','África do Sul':'za','Coreia do Sul':'kr','Canadá':'ca','Estados Unidos':'us','Paraguai':'py','Austrália':'au','Catar':'qa','Suíça':'ch','Brasil':'br','Marrocos':'ma','Haiti':'ht','Escócia':'gb-sct','Alemanha':'de','Curaçao':'cw','Holanda':'nl','Japão':'jp','Costa do Marfim':'ci','Equador':'ec','Tunísia':'tn','Espanha':'es','Cabo Verde':'cv','Bélgica':'be','Egito':'eg','Arábia Saudita':'sa','Uruguai':'uy','Irã':'ir','Nova Zelândia':'nz','Argentina':'ar','Argélia':'dz','França':'fr','Senegal':'sn','Noruega':'no','Áustria':'at','Jordânia':'jo','Portugal':'pt','Inglaterra':'gb-eng','Croácia':'hr','Gana':'gh','Panamá':'pa','Uzbequistão':'uz','Colômbia':'co','Tchéquia':'cz','Bósnia e Herzegovina':'ba','Turquia':'tr','Suécia':'se','Iraque':'iq','RD Congo':'cd'};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fotoSafe(f){f=String(f||'');return /^data:image\//.test(f)||/^https:\/\//.test(f)?f:'';}
+function initials(n){const p=String(n||'').trim().split(' ');return ((p[0][0]||'?')+(p[1]?p[1][0]:'')).toUpperCase();}
+function nomeCurto(n){const p=String(n||'').trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
+function nc(n){return esc(nomeCurto(n));}
+function flag(t){const c=FLAGS[(t||'').trim()];return c?`<img class="fl" src="https://flagcdn.com/w20/${c}.png">`:'';}
+function dir(a,b){return a>b?1:b>a?2:0;}
+
+let usuario=JSON.parse(localStorage.getItem('bolao_user')||'null');
+let modoAuth='login', DADOS=null, MEU=null, PARTICIPANTES=[], PALPITES=[], JOGOS=[], CUTOFF=1, CTX=null, cdInterval=null;
+
+function trocarTab(m){modoAuth=m;
+  document.getElementById('tab-login').classList.toggle('active',m==='login');
+  document.getElementById('tab-reg').classList.toggle('active',m==='reg');
+  document.getElementById('btn-auth').textContent=m==='login'?'Entrar':'Criar conta';
+  document.getElementById('auth-hint').innerHTML=m==='login'?'Entre com seu nome e PIN pra ver seu painel.':'Escolha um nome e um PIN (4+ dígitos).<br><strong style="color:var(--gold)">⚠️ Use um PIN simples só do bolão</strong> — nunca senha de banco/e-mail.';
+}
+async function post(body){try{const r=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)});return await r.json();}catch(e){return{ok:false,erro:'Sem conexão.'};}}
+function nomeOk(n){return n.length>=2&&n.length<=24&&!/[<>"'`\\]/.test(n);}
+async function enviarAuth(){
+  const nome=document.getElementById('in-nome').value.trim();
+  const pin=document.getElementById('in-pin').value.trim();
+  if(!nomeOk(nome)){toast('Nome inválido: 2 a 24 caracteres, sem símbolos.','error');return;}
+  if(pin.length<4){toast('PIN precisa de 4+ dígitos.','error');return;}
+  const btn=document.getElementById('btn-auth');btn.disabled=true;btn.textContent='...';
+  const r=await post({action:modoAuth==='login'?'login':'registrar',nome,pin});
+  btn.disabled=false;btn.textContent=modoAuth==='login'?'Entrar':'Criar conta';
+  if(!r.ok){toast(r.erro||'Erro.','error');return;}
+  usuario={nome:r.nome||nome,pin,foto:r.foto||'',time:r.time||''};
+  localStorage.setItem('bolao_user',JSON.stringify(usuario));
+  iniciar();
+}
+function sair(){usuario=null;localStorage.removeItem('bolao_user');location.reload();}
+
+function posDe(nome){return PARTICIPANTES.findIndex(p=>p.nome===nome)+1;}
+
+function renderDash(){
+  if(!MEU)return;
+  const pos=posDe(MEU.nome);
+  document.getElementById('hero-av').innerHTML=fotoSafe(MEU.foto)?`<img src="${fotoSafe(MEU.foto)}">`:esc(initials(MEU.nome));
+  document.getElementById('hero-nome').textContent=nomeCurto(MEU.nome);
+  document.getElementById('hero-sub').innerHTML=`${pos}º lugar${MEU.time?' · '+flag(MEU.time)+' '+esc(MEU.time):''}`;
+  document.getElementById('hero-pts').textContent=MEU.pontos;
+
+  // CTA palpites pendentes
+  const abertos=JOGOS.filter(j=>j.aberto);
+  const meusJogos={}; PALPITES.filter(p=>p.nome===MEU.nome).forEach(p=>meusJogos[String(p.jogo)]=1);
+  const pend=abertos.filter(j=>!meusJogos[String(j.num)]);
+  const cta=document.getElementById('cta-palpites');
+  if(pend.length){
+    cta.innerHTML=`<div class="cta alerta"><div class="cta-txt">Você tem <b>${pend.length} palpite(s)</b> pra fazer antes dos jogos!</div><a class="cta-btn" href="index.html">Apostar →</a></div>`;
+  }else if(abertos.length){
+    cta.innerHTML=`<div class="cta"><div class="cta-txt">✅ Palpites em dia! Quer revisar?</div><a class="cta-btn" href="index.html">Ver jogos →</a></div>`;
+  }else{
+    cta.innerHTML=`<div class="cta"><div class="cta-txt">Nenhum jogo aberto pra palpitar agora.</div><a class="cta-btn" href="index.html">Abrir Bolão →</a></div>`;
+  }
+
+  // posição
+  document.getElementById('t-pos').innerHTML=pos+'<small>º</small>';
+  document.getElementById('t-pos-sub').textContent=`${MEU.pontos} pts · ${MEU.cravadas||0} cravadas`;
+
+  // top 3
+  document.getElementById('t-top3').innerHTML=PARTICIPANTES.slice(0,3).map((p,i)=>
+    `<div class="mini-row"><span class="mp">${['🥇','🥈','🥉'][i]}</span><span class="mn">${nc(p.nome)}</span><span class="mpt">${p.pontos}</span></div>`).join('')||'<div class="tile-sub">Sem dados ainda.</div>';
+
+  // medalhas
+  const meds=CTX?calcularMedalhas(MEU,CTX):[];
+  const ganhas=meds.filter(m=>m.ok);
+  document.getElementById('t-med').innerHTML=ganhas.length+'<small>/'+meds.length+'</small>';
+  const ult=ganhas[ganhas.length-1];
+  document.getElementById('t-med-sub').textContent=ult?('última: '+ult.ico+' '+ult.t):'nenhuma ainda';
+
+  // destaques
+  if(typeof calcularDestaques==='function'&&CTX){
+    const d=calcularDestaques(PARTICIPANTES,PALPITES,JOGOS,CTX);
+    document.getElementById('t-dest').innerHTML=d.length
+      ? d.slice(0,2).map(x=>`${x.ico} <b>${esc(x.titulo)}:</b> ${nc(x.nome)}`).join('<br>')+'<br><span class="tile-sub">toque pra ver todos</span>'
+      : '<span class="tile-sub">Aparece conforme a galera pontua.</span>';
+  }
+
+  // evolução (sparkline)
+  document.getElementById('t-spark').innerHTML=sparkline(MEU);
+
+  renderVivo();
+}
+
+function sparkline(p){
+  const ac=p.acumulado||{}; const vals=[0,Number(ac[1]||0),Number(ac[2]||0),Number(ac[3]||0)];
+  const max=Math.max(1,...vals); const W=260,H=54;
+  const pts=vals.map((v,i)=>`${(i/(vals.length-1))*W},${H-4-(v/max)*(H-10)}`).join(' ');
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none">
+    <polyline points="${pts}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${vals.map((v,i)=>`<circle cx="${(i/(vals.length-1))*W}" cy="${H-4-(v/max)*(H-10)}" r="3" fill="var(--gold-light)"/>`).join('')}
+  </svg><div class="tile-sub">Pontos acumulados por rodada · toque pra ver o gráfico completo</div>`;
+}
+
+let vivoIdx=null;
+function renderVivo(){
+  const vivos=JOGOS.filter(j=>j.status==='ao vivo');
+  const tile=document.getElementById('t-vivo-tile');
+  const h=document.getElementById('t-vivo-h');
+  const box=document.getElementById('t-vivo');
+  if(cdInterval){clearInterval(cdInterval);cdInterval=null;}
+  if(vivos.length){
+    vivoIdx=null; tile.classList.add('tile-vivo');
+    const j=vivos[0]; const min=j.minuto?(/^\d+$/.test(j.minuto)?j.minuto+"'":esc(j.minuto)):'';
+    h.innerHTML='<span class="vivo-badge"><span class="vivo-dot"></span>AO VIVO '+min+'</span>';
+    box.innerHTML=`<div class="vivo-score">${flag(j.time1)} ${j.vivo1==null?0:j.vivo1} × ${j.vivo2==null?0:j.vivo2} ${flag(j.time2)}</div><div class="tile-sub">${esc(j.time1)} x ${esc(j.time2)}</div>`;
+    return;
+  }
+  tile.classList.remove('tile-vivo');
+  h.innerHTML='<span class="ico">⏱️</span> Próximo jogo';
+  const prox=JOGOS.filter(j=>j.aberto&&j.kickoff).map(j=>({j,t:new Date(j.kickoff).getTime()})).filter(o=>o.t>Date.now()).sort((a,b)=>a.t-b.t)[0];
+  if(!prox){box.innerHTML='<div class="tile-sub" style="margin-top:8px">Nenhum jogo agendado.</div>';return;}
+  vivoIdx=prox.j.num;
+  const tick=()=>{
+    let s=Math.floor((prox.t-Date.now())/1000); if(s<0)s=0;
+    const hh=String(Math.floor(s/3600)).padStart(2,'0');s%=3600;
+    const mm=String(Math.floor(s/60)).padStart(2,'0');const ss=String(s%60).padStart(2,'0');
+    box.innerHTML=`<div class="cd-num">${hh}:${mm}:${ss}</div><div class="tile-sub">${flag(prox.j.time1)} ${esc(prox.j.time1)} x ${esc(prox.j.time2)} ${flag(prox.j.time2)}</div>`;
+  };
+  tick(); cdInterval=setInterval(tick,1000);
+}
+function cliqueVivo(){location.href='index.html';}
+
+/* ---- MODAL PERFIL (carta) ---- */
+function abrirMeuPerfil(){const i=PARTICIPANTES.findIndex(p=>p.nome===MEU.nome);abrirPerfil(i<0?0:i);}
+function abrirPerfil(idx){
+  const p=PARTICIPANTES[idx]; if(!p)return;
+  const pos=idx+1; const medalha=['🥇','🥈','🥉'][idx]||(pos+'º');
+  const jn={}; JOGOS.forEach(j=>jn[String(j.num)]=j);
+  const meus=PALPITES.filter(pl=>pl.nome===p.nome).filter(pl=>{const j=jn[String(pl.jogo)];return j&&Number(j.num)>=CUTOFF;}).sort((a,b)=>Number(a.jogo)-Number(b.jogo));
+  let linhas='';
+  meus.forEach(pl=>{
+    const j=jn[String(pl.jogo)]; const fim=(j.placar1!==null&&j.placar2!==null);
+    let badge;
+    if(!fim) badge='<span class="bdg ag">⏳ Aguardando</span>';
+    else if(!j.confirmado) badge='<span class="bdg cf">⏳ A confirmar</span>';
+    else{const exato=(pl.gol1===j.placar1&&pl.gol2===j.placar2);const result=(dir(pl.gol1,pl.gol2)===dir(j.placar1,j.placar2));
+      if(exato) badge=`<span class="bdg ok">🎯 Placar exato +${pl.pontos}</span>`;
+      else if(pl.pontos>0&&result) badge=`<span class="bdg ok">✅ Resultado certo +${pl.pontos}</span>`;
+      else if(pl.pontos>0) badge=`<span class="bdg meio">➕ Acertou gols +${pl.pontos}</span>`;
+      else badge='<span class="bdg zero">✗ 0 pts</span>';}
+    const res=fim?`Resultado: <strong>${j.placar1} × ${j.placar2}</strong>`:'<span style="color:var(--text-dim)">ainda não rolou</span>';
+    linhas+=`<div class="pf-jogo"><div class="pf-jt">${flag(j.time1)}<span>${esc(j.time1)}</span> <em>×</em> ${flag(j.time2)}<span>${esc(j.time2)}</span></div><div class="pf-info"><span>Jogo ${j.num} · seu palpite: <strong>${pl.gol1} × ${pl.gol2}</strong> · ${res}</span>${badge}</div></div>`;
+  });
+  if(!linhas) linhas='<div class="pf-vazio">Os pontos contam a partir do jogo 25 (18/06). Quando os jogos válidos forem confirmados, o detalhamento aparece aqui.</div>';
+  const torcida=p.time?`${flag(p.time)} <span>${esc(p.time)}</span>`:'';
+  const nf=Math.max(1,Math.min(5,Math.round((p.aproveitamento||0)/20)));
+  const stars='★'.repeat(nf)+'☆'.repeat(5-nf);
+  const fotoCard=fotoSafe(p.foto)?`<img src="${fotoSafe(p.foto)}">`:`<div class="ini">${esc(initials(p.nome))}</div>`;
+  document.getElementById('pf-corpo').innerHTML=`
+    <div class="pf-top">
+      <div class="pf-carta">
+        <div class="pf-carta-top"><span class="pf-carta-pos">${pos}º</span><span class="pf-carta-flag">${p.time?flag(p.time):''}</span></div>
+        <div class="pf-carta-foto">${fotoCard}</div>
+        <div class="pf-carta-stars">${stars}</div>
+        <div class="pf-carta-nome">${nc(p.nome)}</div>
+        <div class="pf-carta-pts">${p.pontos}<span>pts</span></div>
+      </div>
+      <div class="pf-side">
+        <div class="pf-pos">${medalha} ${pos}º lugar</div>
+        ${torcida?`<div class="pf-time">${torcida}</div>`:''}
+        <div class="pf-stats">
+          <div class="pf-st"><b>${p.pontos}</b><span>pontos</span></div>
+          <div class="pf-st"><b>${p.cravadas||0}</b><span>cravadas</span></div>
+          <div class="pf-st"><b>${p.acertos||0}</b><span>acertos</span></div>
+          <div class="pf-st"><b>${p.aproveitamento||0}%</b><span>aproveit.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="pf-sec">Onde pontuou</div>
+    <div class="pf-lista">${linhas}</div>`;
+  abrir('modal-perfil');
+}
+
+function abrirMedalhas(){
+  if(!CTX){return;}
+  const meds=calcularMedalhas(MEU,CTX).slice().sort((a,b)=>(b.ok?1:0)-(a.ok?1:0));
+  const g=meds.filter(m=>m.ok).length;
+  document.getElementById('med-titulo').textContent=`Minhas medalhas · ${g}/${meds.length}`;
+  document.getElementById('med-corpo').innerHTML=meds.map(b=>`<div class="badge ${b.ok?'':'locked'}"><div class="ico">${b.ico}</div><div><div class="bt">${b.t}</div><div class="bd">${b.d}</div></div></div>`).join('');
+  abrir('modal-med');
+}
+function abrirDestaques(){
+  if(typeof calcularDestaques!=='function'||!CTX){return;}
+  const d=calcularDestaques(PARTICIPANTES,PALPITES,JOGOS,CTX);
+  document.getElementById('dest-corpo').innerHTML=d.length
+    ? d.map(x=>`<div class="dest-card"><div class="dest-ico">${x.ico}</div><div class="dest-info"><div class="dest-tit">${esc(x.titulo)}</div><div class="dest-win">${nc(x.nome)}</div><div class="dest-val">${esc(x.valor)}</div></div></div>`).join('')
+    : '<div class="pf-vazio">Os destaques aparecem conforme a galera for palpitando e pontuando.</div>';
+  abrir('modal-dest');
+}
+function abrir(id){document.getElementById(id).classList.add('open');}
+function fecharModal(e,id,force){if(force||e.target===document.getElementById(id))document.getElementById(id).classList.remove('open');}
+
+let toastT;
+function toast(msg,tipo){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(tipo||'');clearTimeout(toastT);toastT=setTimeout(()=>t.className='toast',2800);}
+
+let jaCarregou=false;
+async function carregar(){
+  try{
+    const res=await fetch(SHEETS_URL); DADOS=await res.json();
+    PARTICIPANTES=(DADOS.participantes||[]).slice().sort((a,b)=>b.pontos-a.pontos);
+    PALPITES=DADOS.palpites||[]; JOGOS=DADOS.jogos||[]; CUTOFF=DADOS.cutoff||1;
+    CTX=buildMedalCtx(PARTICIPANTES,PALPITES,JOGOS,CUTOFF);
+    if(DADOS.config&&DADOS.config.titulo)document.getElementById('logo-text').textContent=DADOS.config.titulo;
+    if(usuario){
+      MEU=PARTICIPANTES.find(p=>p.nome.toLowerCase()===usuario.nome.toLowerCase())
+        ||{nome:usuario.nome,foto:usuario.foto||'',time:usuario.time||'',pontos:0,cravadas:0,acertos:0,aproveitamento:0,pontuados:0,rodada:{1:0,2:0,3:0},acumulado:{1:0,2:0,3:0}};
+      renderDash();
+    }
+    jaCarregou=true;
+  }catch(e){console.warn(e);}
+}
+
+function iniciar(){
+  document.getElementById('loading').style.display='none';
+  if(!usuario){document.getElementById('login-area').style.display='block';document.getElementById('dash').style.display='none';return;}
+  document.getElementById('login-area').style.display='none';
+  document.getElementById('dash').style.display='block';
+  carregar();
+}
+
+(async function(){
+  if(usuario){iniciar();}
+  else{await carregar();iniciar();}
+  setInterval(()=>{if(usuario)carregar();},30000);
+})();
+</script>
+</body>
+</html>

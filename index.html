@@ -129,6 +129,7 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
   <div class="header-inner">
     <a class="logo" href="index.html"><img class="logo-img" src="shuriks-logo.png" alt="Shuriks"><div class="logo-text" id="logo-text">Bolão Shuriks</div></a>
     <nav>
+      <a href="inicio.html" class="opt">🏠 Início</a>
       <a href="index.html" class="active">Bolão</a>
       <a href="home.html" class="opt">Classif.</a>
       <a href="palpites.html" class="opt">Palpites</a>
@@ -264,8 +265,7 @@ async function enviarAuth(){
   if(!r.ok){toast(r.erro||'Erro.','error');return;}
   usuario={nome:r.nome||nome,pin,foto:r.foto||''};
   localStorage.setItem('bolao_user',JSON.stringify(usuario));
-  toast(modoAuth==='login'?'Bem-vindo de volta!':'Conta criada!','ok');
-  await carregar(); renderLogado();
+  location.href='inicio.html';
 }
 function sair(){usuario=null;localStorage.removeItem('bolao_user');
   document.getElementById('logged-area').style.display='none';

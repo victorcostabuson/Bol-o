@@ -33,7 +33,8 @@ nav a.nav-bolao{border:1px solid var(--border);color:var(--gold)}
 
 /* PÓDIO */
 .podio{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:8px;align-items:end;margin-bottom:30px}
-.pod{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px 8px;text-align:center;position:relative}
+.pod{background:linear-gradient(165deg,rgba(255,46,154,.07),var(--bg2));border:1px solid var(--border);border-radius:14px;padding:16px 8px;text-align:center;position:relative;cursor:pointer;transition:border-color .15s,transform .15s,box-shadow .15s}
+.pod:hover{border-color:var(--border-strong);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
 .pod .av{width:56px;height:56px;border-radius:50%;background:var(--bg4);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;font-size:18px;overflow:hidden;border:2px solid var(--border)}
 .pod .av img{width:100%;height:100%;object-fit:cover}
 .pod .medal{font-size:26px;line-height:1;margin-bottom:4px}
@@ -49,7 +50,9 @@ nav a.nav-bolao{border:1px solid var(--border);color:var(--gold)}
 .sec-info{font-size:12px;color:var(--text-muted)}
 
 .ranking{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.row{display:grid;grid-template-columns:46px auto 1fr auto;align-items:center;border-bottom:1px solid rgba(255,255,255,.04)}
+.row{display:grid;grid-template-columns:46px auto 1fr auto 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .12s}
+.row:hover{background:rgba(255,46,154,.05)}
+.row-seta{color:var(--text-dim);font-size:22px;text-align:center}
 .row:last-child{border:none}
 .row.p1{background:linear-gradient(90deg,rgba(255,46,154,.07),transparent)}
 .pos{font-family:'Bebas Neue',sans-serif;font-size:22px;text-align:center;color:var(--text-dim);padding:15px 0}
@@ -95,7 +98,60 @@ nav a.nav-bolao{border:1px solid var(--border);color:var(--gold)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty{text-align:center;color:var(--text-muted);padding:24px;font-size:13px}
 footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-size:12px;color:var(--text-dim)}
-@media(max-width:520px){.row{grid-template-columns:38px auto 1fr auto}.pts{font-size:24px}.nome{font-size:14px}.header-inner{height:auto;flex-wrap:wrap;padding:8px 16px;row-gap:6px}nav{width:100%;justify-content:space-between;gap:3px;overflow-x:auto}nav a{padding:6px 6px;font-size:10.5px;white-space:nowrap}}
+@media(max-width:520px){.row{grid-template-columns:38px auto 1fr auto 16px}.pts{font-size:24px}.nome{font-size:14px}.header-inner{height:auto;flex-wrap:wrap;padding:8px 16px;row-gap:6px}nav{width:100%;justify-content:space-between;gap:3px;overflow-x:auto}nav a{padding:6px 6px;font-size:10.5px;white-space:nowrap}}
+
+/* MODAL DE PERFIL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:5vh 14px;overflow-y:auto}
+.modal.open{display:flex}
+.modal-card{background:var(--bg2);border:1px solid var(--border-strong);border-radius:18px;width:100%;max-width:480px;padding:22px;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+.modal-x{position:absolute;top:12px;right:14px;background:var(--bg4);border:none;color:var(--text);width:32px;height:32px;border-radius:50%;font-size:20px;cursor:pointer;line-height:1}
+.pf-head{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-right:30px}
+.pf-av{width:60px;height:60px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;color:var(--gold);font-size:20px;overflow:hidden;border:2px solid var(--border);flex-shrink:0}
+.pf-av img{width:100%;height:100%;object-fit:cover}
+.pf-id{flex:1;min-width:0}
+.pf-pos{font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:1px}
+.pf-nome{font-family:'Oswald',sans-serif;font-size:22px;font-weight:600;line-height:1.1}
+.pf-time{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:5px;margin-top:2px}
+.pf-time .fl{width:16px;border-radius:2px}
+.pf-total{text-align:center;flex-shrink:0}
+.pf-tn{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--gold);line-height:.9}
+.pf-tl{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
+.pf-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.pf-st{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center}
+.pf-st b{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--text);display:block;line-height:1}
+.pf-st span{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}
+.pf-sec{font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:10px}
+.pf-lista{display:flex;flex-direction:column;gap:8px;max-height:46vh;overflow-y:auto}
+.pf-jogo{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.pf-jt{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;margin-bottom:5px}
+.pf-jt .fl{width:18px;border-radius:2px}
+.pf-jt em{color:var(--text-dim);font-style:normal;margin:0 2px}
+.pf-info{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:var(--text-muted);flex-wrap:wrap}
+.pf-info strong{color:var(--text)}
+.bdg{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.bdg.ok{background:rgba(34,197,94,.15);color:#5fe08a}
+.bdg.meio{background:rgba(255,46,154,.15);color:var(--gold-light)}
+.bdg.zero{background:rgba(136,146,164,.15);color:var(--text-muted)}
+.bdg.cf,.bdg.ag{background:rgba(245,180,40,.14);color:#f5c453}
+.pf-vazio{font-size:13px;color:var(--text-muted);text-align:center;padding:20px;line-height:1.5}
+/* CARTA estilo figurinha */
+.pf-top{display:flex;gap:16px;margin-bottom:18px;padding-right:26px}
+.pf-carta{width:142px;flex-shrink:0;border-radius:14px;padding:10px;text-align:center;background:linear-gradient(160deg,rgba(255,46,154,.16),rgba(26,10,20,.6)),var(--bg3);border:2px solid var(--gold);position:relative;box-shadow:0 0 26px rgba(255,46,154,.22),inset 0 1px 0 rgba(255,111,192,.25)}
+.pf-carta-top{display:flex;justify-content:space-between;align-items:center;height:26px;margin-bottom:6px}
+.pf-carta-pos{font-family:'Bebas Neue',sans-serif;font-size:23px;color:var(--gold);line-height:1}
+.pf-carta-flag img{width:27px;border-radius:2px;display:block}
+.pf-carta-foto{width:100%;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--bg4);display:flex;align-items:center;justify-content:center;border:1px solid var(--border-strong)}
+.pf-carta-foto img{width:100%;height:100%;object-fit:cover}
+.pf-carta-foto .ini{font-family:'Oswald',sans-serif;font-weight:700;font-size:44px;color:var(--gold)}
+.pf-carta-stars{color:var(--gold-light);font-size:12px;letter-spacing:3px;margin:7px 0 1px}
+.pf-carta-nome{font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.4px;line-height:1.15;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pf-carta-pts{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);line-height:1;margin-top:2px}
+.pf-carta-pts span{font-size:12px;color:var(--text-muted);letter-spacing:1px}
+.pf-side{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
+.pf-side .pf-pos{margin-bottom:5px}
+.pf-side .pf-time{margin-bottom:12px}
+.pf-side .pf-stats{margin-bottom:0;grid-template-columns:repeat(2,1fr)}
+@media(max-width:480px){.pf-top{flex-direction:column;align-items:center;padding-right:0}.pf-carta{width:165px}.pf-side{width:100%}.pf-side .pf-pos,.pf-side .pf-time{text-align:center;justify-content:center}}
 </style>
 </head>
 <body>
@@ -103,6 +159,7 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
   <div class="header-inner">
     <a class="logo" href="home.html"><img class="logo-img" src="shuriks-logo.png" alt="Shuriks"><div class="logo-text" id="logo-text">Bolão Shuriks</div></a>
     <nav>
+      <a href="inicio.html" class="nav-opt">🏠 Início</a>
       <a href="home.html" class="active">Classif.</a>
       <a href="index.html" class="nav-bolao">⚽ Bolão</a>
       <a href="palpites.html" class="nav-opt">🎯 Palpites</a>
@@ -143,6 +200,13 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
 </div>
 <footer>Bolão Shuriks · <strong style="color:var(--gold)">feito com Claude</strong></footer>
 
+<div class="modal" id="modal-perfil" onclick="fecharPerfil(event)">
+  <div class="modal-card">
+    <button class="modal-x" id="pf-x" onclick="fecharPerfil(event)">×</button>
+    <div id="pf-corpo"></div>
+  </div>
+</div>
+
 <script src="medals.js"></script>
 <script>
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyr5fXwBeGQKntrZv4L6WjkCSCYG5d3rlIrV85_i_wO_VZpb-SVhRmub7aVYCj0KPMDtA/exec';
@@ -152,6 +216,9 @@ function initials(n){const p=String(n||'').trim().split(' ');return ((p[0][0]||'
 function nomeCurto(n){const p=String(n||'').trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
 function nc(n){return esc(nomeCurto(n));}
 function av(p){const f=fotoSafe(p.foto);return f?`<img src="${f}">`:esc(initials(p.nome));}
+const FLAGS={'México':'mx','África do Sul':'za','Coreia do Sul':'kr','Canadá':'ca','Estados Unidos':'us','Paraguai':'py','Austrália':'au','Catar':'qa','Suíça':'ch','Brasil':'br','Marrocos':'ma','Haiti':'ht','Escócia':'gb-sct','Alemanha':'de','Curaçao':'cw','Holanda':'nl','Japão':'jp','Costa do Marfim':'ci','Equador':'ec','Tunísia':'tn','Espanha':'es','Cabo Verde':'cv','Bélgica':'be','Egito':'eg','Arábia Saudita':'sa','Uruguai':'uy','Irã':'ir','Nova Zelândia':'nz','Argentina':'ar','Argélia':'dz','França':'fr','Senegal':'sn','Noruega':'no','Áustria':'at','Jordânia':'jo','Portugal':'pt','Inglaterra':'gb-eng','Croácia':'hr','Gana':'gh','Panamá':'pa','Uzbequistão':'uz','Colômbia':'co','Tchéquia':'cz','Bósnia e Herzegovina':'ba','Turquia':'tr','Suécia':'se','Iraque':'iq','RD Congo':'cd'};
+function flag(t){const c=FLAGS[(t||'').trim()];return c?`<img class="fl" src="https://flagcdn.com/w20/${c}.png">`:'';}
+function dir(a,b){return a>b?1:b>a?2:0;}
 
 let PARTICIPANTES=[], PALPITES=[], JOGOS=[], CUTOFF=1;
 
@@ -162,7 +229,7 @@ function render(){
   const ordem=[1,0,2]; // 2º, 1º, 3º (1º no meio)
   document.getElementById('podio').innerHTML = ordem.map(idx=>{
     const p=lista[idx]; if(!p) return '<div></div>';
-    return `<div class="pod p${idx+1}">
+    return `<div class="pod p${idx+1}" onclick="abrirPerfil(${idx})">
       <div class="medal">${medals[idx]}</div>
       <div class="av">${av(p)}</div>
       <div class="nome">${nc(p.nome)}</div>
@@ -172,17 +239,88 @@ function render(){
 
   // ranking
   document.getElementById('ranking').innerHTML = lista.map((p,i)=>`
-    <div class="row p${i+1}">
+    <div class="row p${i+1}" onclick="abrirPerfil(${i})">
       <div class="pos">${medals[i]||(i+1)+'º'}</div>
       <div class="avatar">${av(p)}</div>
       <div class="nome">${nc(p.nome)}<small>${p.cravadas||0} cravada(s) · ${p.aproveitamento||0}% aprov.</small></div>
       <div class="pts-wrap"><div class="pts">${p.pontos}</div><div class="pts-lbl">pontos</div></div>
+      <div class="row-seta">›</div>
     </div>`).join('');
   document.getElementById('sec-info').textContent = lista.length+' participantes';
 
   renderRodadas(lista);
   renderChart(lista);
   renderDestaques(lista);
+}
+
+// ── MODAL DE PERFIL (clica numa pessoa da classificação) ──
+function abrirPerfil(idx){
+  const p=PARTICIPANTES[idx]; if(!p)return;
+  const pos=idx+1;
+  const medalha=['🥇','🥈','🥉'][idx]||(pos+'º');
+  const jn={}; JOGOS.forEach(j=>jn[String(j.num)]=j);
+
+  // jogos válidos (que contam) que a pessoa palpitou, em ordem
+  const meus=PALPITES.filter(pl=>pl.nome===p.nome)
+    .filter(pl=>{const j=jn[String(pl.jogo)];return j && Number(j.num)>=CUTOFF;})
+    .sort((a,b)=>Number(a.jogo)-Number(b.jogo));
+
+  let linhas='';
+  meus.forEach(pl=>{
+    const j=jn[String(pl.jogo)];
+    const fim=(j.placar1!==null&&j.placar2!==null);
+    let badge;
+    if(!fim){
+      badge='<span class="bdg ag">⏳ Aguardando</span>';
+    }else if(!j.confirmado){
+      badge='<span class="bdg cf">⏳ A confirmar</span>';
+    }else{
+      const exato=(pl.gol1===j.placar1&&pl.gol2===j.placar2);
+      const result=(dir(pl.gol1,pl.gol2)===dir(j.placar1,j.placar2));
+      if(exato) badge=`<span class="bdg ok">🎯 Placar exato +${pl.pontos}</span>`;
+      else if(pl.pontos>0&&result) badge=`<span class="bdg ok">✅ Resultado certo +${pl.pontos}</span>`;
+      else if(pl.pontos>0) badge=`<span class="bdg meio">➕ Acertou gols +${pl.pontos}</span>`;
+      else badge='<span class="bdg zero">✗ 0 pts</span>';
+    }
+    const res=fim?`Resultado: <strong>${j.placar1} × ${j.placar2}</strong>`:'<span style="color:var(--text-dim)">ainda não rolou</span>';
+    linhas+=`<div class="pf-jogo">
+      <div class="pf-jt">${flag(j.time1)}<span>${esc(j.time1)}</span> <em>×</em> ${flag(j.time2)}<span>${esc(j.time2)}</span></div>
+      <div class="pf-info"><span>Jogo ${j.num} · seu palpite: <strong>${pl.gol1} × ${pl.gol2}</strong> · ${res}</span>${badge}</div>
+    </div>`;
+  });
+  if(!linhas) linhas='<div class="pf-vazio">Os pontos contam a partir do jogo 25 (18/06). Quando os jogos válidos forem confirmados, o detalhamento aparece aqui.</div>';
+
+  const torcida=p.time?`${flag(p.time)} <span>${esc(p.time)}</span>`:'';
+  const nf=Math.max(1,Math.min(5,Math.round((p.aproveitamento||0)/20)));
+  const stars='★'.repeat(nf)+'☆'.repeat(5-nf);
+  const fotoCard=fotoSafe(p.foto)?`<img src="${fotoSafe(p.foto)}">`:`<div class="ini">${esc(initials(p.nome))}</div>`;
+  document.getElementById('pf-corpo').innerHTML=`
+    <div class="pf-top">
+      <div class="pf-carta">
+        <div class="pf-carta-top"><span class="pf-carta-pos">${pos}º</span><span class="pf-carta-flag">${p.time?flag(p.time):''}</span></div>
+        <div class="pf-carta-foto">${fotoCard}</div>
+        <div class="pf-carta-stars">${stars}</div>
+        <div class="pf-carta-nome">${nc(p.nome)}</div>
+        <div class="pf-carta-pts">${p.pontos}<span>pts</span></div>
+      </div>
+      <div class="pf-side">
+        <div class="pf-pos">${medalha} ${pos}º lugar</div>
+        ${torcida?`<div class="pf-time">${torcida}</div>`:''}
+        <div class="pf-stats">
+          <div class="pf-st"><b>${p.pontos}</b><span>pontos</span></div>
+          <div class="pf-st"><b>${p.cravadas||0}</b><span>cravadas</span></div>
+          <div class="pf-st"><b>${p.acertos||0}</b><span>acertos</span></div>
+          <div class="pf-st"><b>${p.aproveitamento||0}%</b><span>aproveit.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="pf-sec">Onde pontuou</div>
+    <div class="pf-lista">${linhas}</div>`;
+  document.getElementById('modal-perfil').classList.add('open');
+}
+function fecharPerfil(e){
+  if(e&&e.target.id!=='modal-perfil'&&e.target.id!=='pf-x')return;
+  document.getElementById('modal-perfil').classList.remove('open');
 }
 
 function renderDestaques(lista){
