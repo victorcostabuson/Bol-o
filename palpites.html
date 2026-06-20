@@ -158,19 +158,10 @@ let PARTICIPANTES=[], JOGOS=[], PALPITES=[], LISTA=[];
 let usuario=JSON.parse(localStorage.getItem('bolao_user')||'null');
 
 // busca os palpites do PRÓPRIO usuário (autenticado) e revela só os dele
-async function mergeMeus(){
-  if(!usuario||!usuario.pin)return;
-  try{
-    const r=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'meusPalpites',nome:usuario.nome,pin:usuario.pin})});
-    const d=await r.json();
-    if(!d.ok||!d.palpites)return;
-    const own={}; d.palpites.forEach(pl=>own[String(pl.jogo)]=pl);
-    PALPITES.forEach(pl=>{
-      if(pl.oculto && String(pl.nome).toLowerCase()===String(usuario.nome).toLowerCase() && own[String(pl.jogo)]){
-        pl.gol1=own[String(pl.jogo)].gol1; pl.gol2=own[String(pl.jogo)].gol2; pl.oculto=false; pl.eu=true;
-      }
-    });
-  }catch(e){}
+function authURL(){
+  return (usuario&&usuario.pin)
+    ? SHEETS_URL+'?u='+encodeURIComponent(usuario.nome)+'&p='+encodeURIComponent(usuario.pin)
+    : SHEETS_URL;
 }
 
 function trocar(t){
@@ -278,10 +269,9 @@ function preencherJogos(){
 
 async function carregar(){
   try{
-    const res=await fetch(SHEETS_URL); const d=await res.json();
+    const res=await fetch(authURL()); const d=await res.json();
     PARTICIPANTES=(d.participantes||[]).slice().sort((a,b)=>b.pontos-a.pontos);
     JOGOS=d.jogos||[]; PALPITES=d.palpites||[];
-    await mergeMeus();
     if(d.config&&d.config.titulo)document.getElementById('logo-text').textContent=d.config.titulo;
     document.getElementById('loading').style.display='none';
     document.getElementById('conteudo').style.display='block';

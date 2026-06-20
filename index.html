@@ -323,26 +323,19 @@ function sair(){usuario=null;localStorage.removeItem('bolao_user');
 let jaCarregou=false;
 async function carregar(){
   try{
-    const res=await fetch(SHEETS_URL); const d=await res.json();
+    const res=await fetch(authURL()); const d=await res.json();
     JOGOS=d.jogos||[]; PALPITES=d.palpites||[];
-    await mergeMeus();
     if(d.config&&d.config.titulo){document.getElementById('hero-title').textContent=d.config.titulo;document.getElementById('logo-text').textContent=d.config.titulo;}
     jaCarregou=true; setLive(true);
     if(usuario){renderJogos();atualizarContagem();}
     if(JOGOS.some(j=>j.status==='ao vivo'))carregarDetalhes();
   }catch(e){if(!jaCarregou)setLive(false);console.warn(e);}
 }
-// revela os palpites do PRÓPRIO usuário (que vêm ocultos do servidor pra proteger dos outros)
-async function mergeMeus(){
-  if(!usuario||!usuario.pin)return;
-  const d=await post({action:'meusPalpites',nome:usuario.nome,pin:usuario.pin});
-  if(!d||!d.ok||!d.palpites)return;
-  const own={}; d.palpites.forEach(pl=>own[String(pl.jogo)]=pl);
-  PALPITES.forEach(pl=>{
-    if(pl.oculto && String(pl.nome).toLowerCase()===String(usuario.nome).toLowerCase() && own[String(pl.jogo)]){
-      pl.gol1=own[String(pl.jogo)].gol1; pl.gol2=own[String(pl.jogo)].gol2; pl.oculto=false;
-    }
-  });
+// chama o doGet já com o login pra receber os SEUS palpites revelados (sem 2ª chamada)
+function authURL(){
+  return (usuario&&usuario.pin)
+    ? SHEETS_URL+'?u='+encodeURIComponent(usuario.nome)+'&p='+encodeURIComponent(usuario.pin)
+    : SHEETS_URL;
 }
 function setLive(ok){document.querySelector('.live-dot').style.background=ok?'#22c55e':'#e03030';document.getElementById('live-text').textContent=ok?'Sincronizado':'Offline';}
 async function post(body){
@@ -370,7 +363,8 @@ function cardJogo(j){
   let statusHtml,palpiteHtml='',clik=false;
   if(j.aberto){
     if(mp){statusHtml='<span class="jogo-status st-feito">Palpitado</span>';
-      palpiteHtml=`<div class="jogo-meu-palpite">Seu palpite: ${mp.gol1} × ${mp.gol2} <span class="edit">· toque pra editar</span></div>`;clik=true;}
+      const v=(mp.gol1!=null&&mp.gol2!=null)?`${mp.gol1} × ${mp.gol2}`:'🔒';
+      palpiteHtml=`<div class="jogo-meu-palpite">Seu palpite: ${v} <span class="edit">· toque pra editar</span></div>`;clik=true;}
     else{statusHtml='<span class="jogo-status st-aberto">Aberto</span>';clik=true;}
   }else{
     const fim=(j.placar1!==null&&j.placar2!==null);
@@ -380,7 +374,7 @@ function cardJogo(j){
       statusHtml=`<span class="jogo-status st-fechado">${fim?'Encerrado':'Fechado'}</span>`;
     }
     const placar=fim?` · ${j.placar1} × ${j.placar2}${(fim&&!j.confirmado)?' (a confirmar)':''}`:'';
-    if(mp)palpiteHtml=`<div class="jogo-meu-palpite">Seu palpite: ${mp.gol1} × ${mp.gol2}${placar}</div>`;
+    if(mp){const v=(mp.gol1!=null&&mp.gol2!=null)?`${mp.gol1} × ${mp.gol2}`:'—';palpiteHtml=`<div class="jogo-meu-palpite">Seu palpite: ${v}${placar}</div>`;}
   }
   return `<div class="jogo-card ${clik?'clik':''}" ${clik?`onclick="abrirModal(${j.num})"`:''}>
     <div class="jogo-top"><span class="jogo-meta">Jogo ${j.num} · R${j.rodada} · ${j.data} · ${j.hora}</span>${statusHtml}</div>
@@ -477,8 +471,8 @@ function abrirModal(num){
   document.getElementById('m-flag2').src=flagSrc(jogoAtivo.time2);
   document.getElementById('m-nome1').textContent=jogoAtivo.time1;
   document.getElementById('m-nome2').textContent=jogoAtivo.time2;
-  document.getElementById('m-g1').value=mp?mp.gol1:0;
-  document.getElementById('m-g2').value=mp?mp.gol2:0;
+  document.getElementById('m-g1').value=(mp&&mp.gol1!=null)?mp.gol1:0;
+  document.getElementById('m-g2').value=(mp&&mp.gol2!=null)?mp.gol2:0;
   document.getElementById('overlay').classList.add('open');
 }
 function fecharModal(e){if(e.target===document.getElementById('overlay'))fecharModalBtn();}
