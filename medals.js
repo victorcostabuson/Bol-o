@@ -99,6 +99,7 @@
     const timeDe = {}; participantes.forEach(p => timeDe[p.nome] = norm(p.time));
 
     palpites.forEach(pl => {
+      if (pl.oculto) return; // jogo ainda não começou: palpite escondido, não conta
       if (empates[pl.nome] === undefined) { empates[pl.nome] = 0; zebras[pl.nome] = 0; clubista[pl.nome] = 0; }
       if (Number(pl.gol1) === Number(pl.gol2)) empates[pl.nome]++;
       const info = ctx.jogoInfo[String(pl.jogo)];

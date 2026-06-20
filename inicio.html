@@ -387,7 +387,7 @@ function abrirPerfil(idx){
   const p=PARTICIPANTES[idx]; if(!p)return;
   const pos=idx+1; const medalha=['🥇','🥈','🥉'][idx]||(pos+'º');
   const jn={}; JOGOS.forEach(j=>jn[String(j.num)]=j);
-  const meus=PALPITES.filter(pl=>pl.nome===p.nome).filter(pl=>{const j=jn[String(pl.jogo)];return j&&Number(j.num)>=CUTOFF;}).sort((a,b)=>Number(a.jogo)-Number(b.jogo));
+  const meus=PALPITES.filter(pl=>pl.nome===p.nome).filter(pl=>{const j=jn[String(pl.jogo)];return j&&!pl.oculto&&Number(j.num)>=CUTOFF;}).sort((a,b)=>Number(a.jogo)-Number(b.jogo));
   let linhas='';
   meus.forEach(pl=>{
     const j=jn[String(pl.jogo)]; const fim=(j.placar1!==null&&j.placar2!==null);
