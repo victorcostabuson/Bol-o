@@ -262,7 +262,7 @@ function abrirPerfil(idx){
 
   // jogos válidos (que contam) que a pessoa palpitou, em ordem
   const meus=PALPITES.filter(pl=>pl.nome===p.nome)
-    .filter(pl=>{const j=jn[String(pl.jogo)];return j && !pl.oculto && Number(j.num)>=CUTOFF;})
+    .filter(pl=>{const j=jn[String(pl.jogo)];return j && Number(j.num)>=CUTOFF;})
     .sort((a,b)=>Number(a.jogo)-Number(b.jogo));
 
   let linhas='';
