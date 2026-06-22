@@ -115,6 +115,23 @@ nav a:hover,nav a.active{color:var(--gold);background:rgba(255,46,154,0.08)}
 .modal-titulo{font-family:'Oswald',sans-serif;font-size:18px;font-weight:600;text-align:center;color:var(--gold);margin-bottom:4px}
 .modal-meta{font-size:12px;color:var(--text-muted);text-align:center;margin-bottom:8px}
 .modal-btns{display:flex;gap:10px}
+.palp-lista{display:flex;flex-direction:column;gap:7px;max-height:52vh;overflow-y:auto;margin-top:4px}
+.palp-row{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:9px 12px}
+.palp-nome{flex:1;min-width:0;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.palp-nome em{color:var(--gold);font-style:normal;font-size:11px;margin-left:5px;font-weight:700}
+.palp-pts{font-size:11px;color:var(--text-muted);margin-left:7px;font-weight:400}
+.palp-placar{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:1px;white-space:nowrap}
+.palp-vazio{font-size:13px;color:var(--text-muted);text-align:center;padding:18px}
+.vivo-toque{font-size:10px;color:#ff8a8a;text-align:center;margin-top:7px;letter-spacing:.3px}
+.gols{margin-top:9px;display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--border);padding-top:8px}
+.gol-l{font-size:12px;display:flex;align-items:center;gap:7px;color:#fff}
+.gol-l img{flex-shrink:0}
+.gol-l span{color:#ffc9e6}
+.modal-gols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0 16px}
+.mg-time{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 11px;font-size:12px;font-weight:600}
+.mg-list{margin-top:5px;font-weight:400;color:var(--text-muted);font-size:11px;line-height:1.6}
+.mg-list .g{display:block}
+.palp-sub{font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin:0 0 9px}
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg4);border:1px solid var(--border);color:var(--text);padding:13px 20px;border-radius:10px;font-size:14px;z-index:300;opacity:0;transition:all .25s;pointer-events:none;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -221,6 +238,15 @@ footer{border-top:1px solid var(--border);text-align:center;padding:24px;font-si
   </div>
 </div>
 
+<div class="overlay" id="overlay-palp" onclick="if(event.target===this)fecharPalp()">
+  <div class="modal">
+    <div class="modal-titulo" id="palp-titulo">Palpites do jogo</div>
+    <div class="modal-meta" id="palp-meta">—</div>
+    <div class="palp-lista" id="palp-lista"></div>
+    <div class="modal-btns" style="margin-top:16px"><button class="btn btn-ghost" style="width:100%" onclick="fecharPalp()">Fechar</button></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <footer>Bolão Shuriks · <strong style="color:var(--gold)">feito com Claude</strong></footer>
 
@@ -242,9 +268,33 @@ function flag(t,s=26){const c=FLAGS[(t||'').trim()];if(!c)return `<span style="d
 function flagSrc(t){const c=FLAGS[(t||'').trim()];return c?`https://flagcdn.com/w80/${c}.png`:'';}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function fotoSafe(f){f=String(f||'');return /^data:image\//.test(f)||/^https:\/\//.test(f)?f:'';}
+function nomeCurto(n){const p=String(n||'').trim().split(' ');return p[0]+(p.length>1?' '+p[p.length-1]:'');}
 function initials(n){const p=String(n||'').trim().split(' ');return ((p[0][0]||'?')+(p[1]?p[1][0]:'')).toUpperCase();}
 
-let JOGOS=[], PALPITES=[], usuario=JSON.parse(localStorage.getItem('bolao_user')||'null');
+let JOGOS=[], PALPITES=[], usuario=JSON.parse(localStorage.getItem('bolao_user')||'null'), DETALHES={};
+// estadio_id -> nome. Rode listarEstadios() no Apps Script e me mande o resultado pra eu preencher.
+const MAPA_ESTADIOS={};
+async function carregarDetalhes(){
+  try{
+    const r=await fetch(SHEETS_URL+'?detalhes=1');
+    const d=await r.json();
+    if(d&&d.ok&&d.detalhes){DETALHES=d.detalhes;renderAoVivo();}
+  }catch(e){}
+}
+function golsHtml(num,t1,t2){
+  const d=DETALHES[String(num)]; if(!d)return '';
+  const linha=(tm,arr)=>(arr&&arr.length)?`<div class="gol-l">${flag(tm,16)}<span>${arr.map(esc).join(', ')}</span></div>`:'';
+  const html=linha(t1,d.casa)+linha(t2,d.fora);
+  return html?`<div class="gols">${html}</div>`:'';
+}
+function metaExtra(num){
+  const d=DETALHES[String(num)]; if(!d)return '';
+  let s='';
+  if(d.grupo)s+=' · Grupo '+esc(d.grupo);
+  const est=(d.estadio&&MAPA_ESTADIOS[d.estadio])?MAPA_ESTADIOS[d.estadio]:'';
+  if(est)s+=' · 🏟️ '+esc(est);
+  return s;
+}
 let modoAuth='login', jogoAtivo=null, filtro='pendentes', cdInterval=null;
 
 function trocarTab(m){modoAuth=m;
@@ -276,12 +326,19 @@ function sair(){usuario=null;localStorage.removeItem('bolao_user');
 let jaCarregou=false;
 async function carregar(){
   try{
-    const res=await fetch(SHEETS_URL); const d=await res.json();
+    const res=await fetch(authURL()); const d=await res.json();
     JOGOS=d.jogos||[]; PALPITES=d.palpites||[];
     if(d.config&&d.config.titulo){document.getElementById('hero-title').textContent=d.config.titulo;document.getElementById('logo-text').textContent=d.config.titulo;}
     jaCarregou=true; setLive(true);
     if(usuario){renderJogos();atualizarContagem();}
+    if(JOGOS.some(j=>j.status==='ao vivo'))carregarDetalhes();
   }catch(e){if(!jaCarregou)setLive(false);console.warn(e);}
+}
+// chama o doGet já com o login pra receber os SEUS palpites revelados (sem 2ª chamada)
+function authURL(){
+  return (usuario&&usuario.pin)
+    ? SHEETS_URL+'?u='+encodeURIComponent(usuario.nome)+'&p='+encodeURIComponent(usuario.pin)
+    : SHEETS_URL;
 }
 function setLive(ok){document.querySelector('.live-dot').style.background=ok?'#22c55e':'#e03030';document.getElementById('live-text').textContent=ok?'Sincronizado':'Offline';}
 async function post(body){
@@ -309,7 +366,8 @@ function cardJogo(j){
   let statusHtml,palpiteHtml='',clik=false;
   if(j.aberto){
     if(mp){statusHtml='<span class="jogo-status st-feito">Palpitado</span>';
-      palpiteHtml=`<div class="jogo-meu-palpite">Seu palpite: ${mp.gol1} × ${mp.gol2} <span class="edit">· toque pra editar</span></div>`;clik=true;}
+      const v=(mp.gol1!=null&&mp.gol2!=null)?`${mp.gol1} × ${mp.gol2}`:'🔒';
+      palpiteHtml=`<div class="jogo-meu-palpite">Seu palpite: ${v} <span class="edit">· toque pra editar</span></div>`;clik=true;}
     else{statusHtml='<span class="jogo-status st-aberto">Aberto</span>';clik=true;}
   }else{
     const fim=(j.placar1!==null&&j.placar2!==null);
@@ -319,7 +377,7 @@ function cardJogo(j){
       statusHtml=`<span class="jogo-status st-fechado">${fim?'Encerrado':'Fechado'}</span>`;
     }
     const placar=fim?` · ${j.placar1} × ${j.placar2}${(fim&&!j.confirmado)?' (a confirmar)':''}`:'';
-    if(mp)palpiteHtml=`<div class="jogo-meu-palpite">Seu palpite: ${mp.gol1} × ${mp.gol2}${placar}</div>`;
+    if(mp){const v=(mp.gol1!=null&&mp.gol2!=null)?`${mp.gol1} × ${mp.gol2}`:'—';palpiteHtml=`<div class="jogo-meu-palpite">Seu palpite: ${v}${placar}</div>`;}
   }
   return `<div class="jogo-card ${clik?'clik':''}" ${clik?`onclick="abrirModal(${j.num})"`:''}>
     <div class="jogo-top"><span class="jogo-meta">Jogo ${j.num} · R${j.rodada} · ${j.data} · ${j.hora}</span>${statusHtml}</div>
@@ -355,15 +413,47 @@ function renderAoVivo(){
   el.innerHTML='<div class="sec-title" style="color:#ff6b6b">🔴 Ao vivo agora</div>'+vivos.map(j=>{
     const s1=j.vivo1==null?0:j.vivo1, s2=j.vivo2==null?0:j.vivo2;
     const min=j.minuto?(/^\d+$/.test(j.minuto)?j.minuto+"'":esc(j.minuto)):'';
-    return `<div class="jogo-card vivo">
-      <div class="jogo-top"><span class="jogo-meta">Jogo ${j.num} · R${j.rodada}</span><span class="vivo-badge"><span class="vivo-dot"></span>Ao vivo ${min}</span></div>
+    return `<div class="jogo-card vivo" onclick="abrirPalpitesJogo(${j.num})" style="cursor:pointer">
+      <div class="jogo-top"><span class="jogo-meta">Jogo ${j.num} · R${j.rodada}${metaExtra(j.num)}</span><span class="vivo-badge"><span class="vivo-dot"></span>Ao vivo ${min}</span></div>
       <div class="jogo-times">
         <div class="time t1">${flag(j.time1)}<span class="time-nome">${esc(j.time1)}</span></div>
         <span class="placar-vivo">${s1} × ${s2}</span>
         <div class="time t2">${flag(j.time2)}<span class="time-nome">${esc(j.time2)}</span></div>
-      </div></div>`;
+      </div>
+      ${golsHtml(j.num,j.time1,j.time2)}
+      <div class="vivo-toque">👆 toque para ver os palpites da galera</div></div>`;
   }).join('');
 }
+
+function abrirPalpitesJogo(num){
+ try{
+  const j=JOGOS.find(x=>String(x.num)===String(num)); if(!j)return;
+  document.getElementById('palp-titulo').innerHTML=`${flag(j.time1,22)} ${esc(j.time1)} <span style="color:var(--text-dim)">×</span> ${esc(j.time2)} ${flag(j.time2,22)}`;
+  let placar='';
+  if(j.status==='ao vivo') placar='ao vivo · '+(j.vivo1==null?0:j.vivo1)+' × '+(j.vivo2==null?0:j.vivo2);
+  else if(j.placar1!=null&&j.placar2!=null) placar='final · '+j.placar1+' × '+j.placar2;
+  document.getElementById('palp-meta').textContent='Jogo '+j.num+(placar?' · '+placar:'')+metaExtra(j.num).replace(/<[^>]+>/g,'');
+  const d=DETALHES[String(num)];
+  let golsBloco='';
+  if(d&&((d.casa&&d.casa.length)||(d.fora&&d.fora.length))){
+    const col=(tm,arr)=>`<div class="mg-time">${flag(tm,18)} ${esc(tm)}<div class="mg-list">${arr&&arr.length?arr.map(g=>`<span class="g">⚽ ${esc(g)}</span>`).join(''):'—'}</div></div>`;
+    golsBloco=`<div class="modal-gols">${col(j.time1,d.casa)}${col(j.time2,d.fora)}</div>`;
+  }
+  const lista=PALPITES.filter(p=>String(p.jogo)===String(num)&&!p.oculto)
+    .sort((a,b)=>(b.pontos||0)-(a.pontos||0)||String(a.nome).localeCompare(String(b.nome)));
+  const meu=usuario?String(usuario.nome).toLowerCase():'';
+  const el=document.getElementById('palp-lista');
+  const fim=(j.placar1!=null&&j.placar2!=null);
+  const linhas=lista.length?lista.map(p=>{
+    const eu=String(p.nome).toLowerCase()===meu;
+    const pts=fim&&p.pontos>0?`<span class="palp-pts">+${p.pontos}</span>`:'';
+    return `<div class="palp-row"><div class="palp-nome">${esc(nomeCurto(p.nome))}${eu?' <em>você</em>':''}${pts}</div><div class="palp-placar">${p.gol1} × ${p.gol2}</div></div>`;
+  }).join(''):'<div class="palp-vazio">Ninguém palpitou nesse jogo.</div>';
+  el.innerHTML=golsBloco+'<div class="palp-sub">Palpites da galera</div>'+linhas;
+  document.getElementById('overlay-palp').classList.add('open');
+ }catch(err){ try{toast('Erro ao abrir: '+err.message,'error');}catch(_){alert('Erro ao abrir: '+err.message);} }
+}
+function fecharPalp(){document.getElementById('overlay-palp').classList.remove('open');}
 
 function atualizarContagem(){
   const cd=document.getElementById('countdown');
@@ -386,8 +476,8 @@ function abrirModal(num){
   document.getElementById('m-flag2').src=flagSrc(jogoAtivo.time2);
   document.getElementById('m-nome1').textContent=jogoAtivo.time1;
   document.getElementById('m-nome2').textContent=jogoAtivo.time2;
-  document.getElementById('m-g1').value=mp?mp.gol1:0;
-  document.getElementById('m-g2').value=mp?mp.gol2:0;
+  document.getElementById('m-g1').value=(mp&&mp.gol1!=null)?mp.gol1:0;
+  document.getElementById('m-g2').value=(mp&&mp.gol2!=null)?mp.gol2:0;
   document.getElementById('overlay').classList.add('open');
 }
 function fecharModal(e){if(e.target===document.getElementById('overlay'))fecharModalBtn();}

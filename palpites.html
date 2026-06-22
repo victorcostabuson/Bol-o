@@ -155,6 +155,14 @@ function nomeCurto(n){const p=String(n||'').trim().split(' ');return p[0]+(p.len
 function avImg(p){const f=fotoSafe(p.foto);return f?`<img src="${f}">`:esc(initials(p.nome));}
 
 let PARTICIPANTES=[], JOGOS=[], PALPITES=[], LISTA=[];
+let usuario=JSON.parse(localStorage.getItem('bolao_user')||'null');
+
+// busca os palpites do PRÓPRIO usuário (autenticado) e revela só os dele
+function authURL(){
+  return (usuario&&usuario.pin)
+    ? SHEETS_URL+'?u='+encodeURIComponent(usuario.nome)+'&p='+encodeURIComponent(usuario.pin)
+    : SHEETS_URL;
+}
 
 function trocar(t){
   document.getElementById('tab-pessoa').classList.toggle('active',t==='pessoa');
@@ -182,11 +190,19 @@ function ver(idx){
   document.getElementById('det-av').innerHTML=avImg(p);
   document.getElementById('det-nome').textContent=nomeCurto(p.nome);
   document.getElementById('det-pts').textContent=p.pontos+' pontos · '+(p.cravadas||0)+' cravada(s)';
-  const meus=PALPITES.filter(x=>x.nome.toLowerCase()===p.nome.toLowerCase());
+  const meus=PALPITES.filter(x=>x.nome.toLowerCase()===p.nome.toLowerCase()).slice().sort((a,b)=>Number(a.jogo)-Number(b.jogo));
   const jn={};JOGOS.forEach(j=>jn[String(j.num)]=j);
   document.getElementById('det-palpites').innerHTML=meus.length?meus.map(pl=>{
     const j=jn[String(pl.jogo)]||{time1:'?',time2:'?'};
     const fim=(j.placar1!==null&&j.placar2!==null);
+    if(pl.oculto){
+      return `<div class="pl-row">
+        <div class="pl-time">${flag(j.time1)}<span>${esc(j.time1)}</span></div>
+        <div class="pl-placar" style="color:var(--text-dim);font-size:15px" title="Aparece quando o jogo começar">🔒</div>
+        <div class="pl-time r">${flag(j.time2)}<span>${esc(j.time2)}</span></div>
+        <div class="pl-pts">—</div>
+      </div>`;
+    }
     return `<div class="pl-row">
       <div class="pl-time">${flag(j.time1)}<span>${esc(j.time1)}</span></div>
       <div class="pl-placar">${pl.gol1} × ${pl.gol2}</div>
@@ -220,7 +236,7 @@ function renderJogo(){
     document.getElementById('jogo-view').innerHTML=head+'<div class="locked">🔒 Os palpites de todos aparecem aqui assim que o jogo começar (pra ninguém colar no chute do outro).</div>';
     return;
   }
-  const pals=PALPITES.filter(p=>String(p.jogo)===String(num));
+  const pals=PALPITES.filter(p=>String(p.jogo)===String(num)&&!p.oculto);
   if(!pals.length){document.getElementById('jogo-view').innerHTML=head+'<div class="empty">Ninguém palpitou neste jogo.</div>';return;}
 
   // distribuição dos placares mais chutados
@@ -253,7 +269,7 @@ function preencherJogos(){
 
 async function carregar(){
   try{
-    const res=await fetch(SHEETS_URL); const d=await res.json();
+    const res=await fetch(authURL()); const d=await res.json();
     PARTICIPANTES=(d.participantes||[]).slice().sort((a,b)=>b.pontos-a.pontos);
     JOGOS=d.jogos||[]; PALPITES=d.palpites||[];
     if(d.config&&d.config.titulo)document.getElementById('logo-text').textContent=d.config.titulo;
