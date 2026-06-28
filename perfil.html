@@ -309,5 +309,46 @@ else{ iniciar(); }
 let toastT;
 function toast(msg,tipo){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(tipo||'');clearTimeout(toastT);toastT=setTimeout(()=>t.className='toast',2800);}
 </script>
+<script>
+/* Pick'Em widget: link no menu (todas) + badge da medalha (perfil/inicio) */
+(async function(){
+  if(window.__pkWidget) return; window.__pkWidget=1;
+  var EXEC="https://script.google.com/macros/s/AKfycbyr5fXwBeGQKntrZv4L6WjkCSCYG5d3rlIrV85_i_wO_VZpb-SVhRmub7aVYCj0KPMDtA/exec";
+  try{
+    var nav=document.querySelector('nav');
+    if(nav && !nav.querySelector('a[href="pickem.html"]')){
+      var a=document.createElement('a'); a.href='pickem.html'; a.textContent="🎯 Pick'Em";
+      var perfil=nav.querySelector('a[href="perfil.html"]');
+      if(perfil) nav.insertBefore(a, perfil); else nav.appendChild(a);
+    }
+  }catch(e){}
+  if(!/perfil|inicio/i.test(location.pathname)) return;
+  var me=null; try{var o=JSON.parse(localStorage.getItem('bolao_user')||'null'); me=o&&(o.nome||o.u||o.name);}catch(e){}
+  var medals=[]; try{
+    var r=await fetch(EXEC,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'pickemMedals'})});
+    var j=await r.json(); medals=(j&&j.medals)||[];
+  }catch(e){ return; }
+  var mine = me ? medals.find(function(m){return String(m.nome).toLowerCase()===String(me).toLowerCase();}) : null;
+  var tier = mine? mine.medalha : '';
+  var map={bronze:['medalha-pickem-bronze.png','Bronze','#C98A4B'],prata:['medalha-pickem-prata.png','Prata','#cfd2d8'],ouro:['medalha-pickem-ouro.png','Ouro','#E9C13B'],platina:['medalha-pickem-platina.png','Platina','#d8b8e8']};
+  var card=document.createElement('div');
+  card.style.cssText='max-width:760px;margin:14px auto;padding:14px;background:#17171e;border:1px solid #2a2a34;border-radius:14px;display:flex;align-items:center;gap:14px;font-family:Inter,sans-serif;color:#f4f4f7;box-shadow:0 0 18px rgba(255,46,154,.12)';
+  var inner;
+  if(tier&&map[tier]){
+    inner='<img src="'+map[tier][0]+'" style="width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(255,46,154,.35))">'
+      +'<div style="flex:1"><div style="font-family:Oswald,sans-serif;font-size:11px;color:#9a9aa8;letter-spacing:1px">PICK\u0027EM DA COPA</div>'
+      +'<div style="font-family:\u0027Bebas Neue\u0027,sans-serif;font-size:30px;color:'+map[tier][2]+';line-height:1">'+map[tier][1]+'</div></div>'
+      +'<a href="pickem.html" style="color:#FF6FC0;font-size:13px;text-decoration:none;font-family:Oswald,sans-serif">ver chave \u2192</a>';
+  }else{
+    inner='<div style="font-size:34px">🎯</div>'
+      +'<div style="flex:1"><div style="font-family:Oswald,sans-serif;font-size:11px;color:#9a9aa8;letter-spacing:1px">PICK\u0027EM DA COPA</div>'
+      +'<div style="font-family:\u0027Bebas Neue\u0027,sans-serif;font-size:26px;color:#fff;line-height:1">Monte sua chave</div></div>'
+      +'<a href="pickem.html" style="color:#FF6FC0;font-size:13px;text-decoration:none;font-family:Oswald,sans-serif">jogar \u2192</a>';
+  }
+  card.innerHTML=inner;
+  var anchor=document.querySelector('.wrap')||document.body;
+  anchor.insertBefore(card, anchor.firstChild);
+})();
+</script>
 </body>
 </html>

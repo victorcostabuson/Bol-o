@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pick'Em da Copa · Shuriks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#FF2E9A; --pink-l:#FF6FC0; --pink-d:#C01878;
+  --bg:#0a0a0d; --bg2:#141419; --card:#17171e; --line:#2a2a34;
+  --txt:#f4f4f7; --mut:#9a9aa8;
+  --bronze:#C98A4B; --prata:#cfd2d8; --ouro:#E9C13B; --platina:#d8b8e8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 80px}
+
+/* nav */
+nav{display:flex;gap:6px;overflow-x:auto;padding:10px 6px;background:#000;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+nav a{flex:0 0 auto;font-family:'Oswald';font-weight:500;font-size:13px;color:var(--mut);padding:7px 12px;border-radius:8px;border:1px solid transparent;white-space:nowrap}
+nav a.on{color:#fff;background:linear-gradient(135deg,var(--pink-d),var(--pink));border-color:var(--pink)}
+
+/* banner */
+.banner{margin:14px 0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 0 30px rgba(255,46,154,.15)}
+
+h1,h2,h3{font-family:'Bebas Neue';letter-spacing:1px;font-weight:400}
+.sub{color:var(--mut);font-size:13px}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+
+/* medal status */
+.medalbox{display:flex;gap:14px;align-items:center}
+.medalbox img{width:84px;height:84px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,46,154,.35))}
+.tiername{font-family:'Bebas Neue';font-size:30px;line-height:1}
+.tier-bronze{color:var(--bronze)} .tier-prata{color:var(--prata)} .tier-ouro{color:var(--ouro)} .tier-platina{color:var(--platina)}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.rule{font-size:12px;color:var(--mut);background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:7px 9px}
+.rule b{color:var(--txt);font-weight:700}
+
+/* progress */
+.prog{font-family:'Oswald';font-size:14px;color:var(--pink-l);margin:4px 0 0}
+.lockbar{background:linear-gradient(135deg,#3a1020,#241018);border:1px solid var(--pink-d);color:var(--pink-l);font-family:'Oswald';font-size:13px;padding:10px 14px;border-radius:10px;margin:10px 0;text-align:center}
+
+/* rounds */
+.round{margin:22px 0 8px}
+.round h2{font-size:26px;color:#fff;border-left:4px solid var(--pink);padding-left:10px}
+.match{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:9px 0}
+.match .mt{font-family:'Oswald';font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.team{width:100%;text-align:left;background:var(--bg2);border:1.5px solid var(--line);color:var(--txt);
+      font-family:'Oswald';font-weight:500;font-size:15px;padding:12px 14px;border-radius:9px;cursor:pointer;transition:.12s}
+.team:active{transform:scale(.99)}
+.team.sel{background:linear-gradient(135deg,var(--pink-d),var(--pink));border-color:var(--pink);color:#fff;font-weight:700;box-shadow:0 0 14px rgba(255,46,154,.3)}
+.team.dim{opacity:.5}
+.team.empty{color:var(--mut);font-style:italic;cursor:default}
+.vs{text-align:center;color:var(--mut);font-size:11px;margin:5px 0;font-family:'Oswald'}
+.locked .team{cursor:default}
+
+/* champion */
+.champ{background:linear-gradient(135deg,#241018,#1a1020);border:1.5px solid var(--ouro);border-radius:14px;padding:18px;text-align:center;margin:10px 0}
+.champ .lbl{font-family:'Oswald';color:var(--ouro);font-size:12px;letter-spacing:1px}
+.champ .name{font-family:'Bebas Neue';font-size:40px;color:#fff;line-height:1;margin-top:4px}
+.champ .name.none{color:var(--mut);font-size:24px}
+
+/* buttons */
+.btn{display:block;width:100%;font-family:'Oswald';font-weight:700;font-size:16px;letter-spacing:.5px;
+     padding:15px;border:none;border-radius:12px;cursor:pointer;color:#fff;
+     background:linear-gradient(135deg,var(--pink-d),var(--pink));box-shadow:0 0 20px rgba(255,46,154,.3)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--mut);box-shadow:none;font-weight:500;font-size:13px;padding:11px;margin-top:10px}
+.btn[disabled]{opacity:.5;cursor:default;box-shadow:none}
+
+/* login */
+.login input{width:100%;padding:13px;margin:7px 0;background:var(--bg2);border:1px solid var(--line);border-radius:10px;color:#fff;font-size:15px;font-family:'Inter'}
+.err{color:#ff7a9c;font-size:13px;margin:6px 0;min-height:18px}
+
+/* slides */
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:50;display:none;align-items:center;justify-content:center;padding:18px}
+.ovl.on{display:flex}
+.slide{max-width:520px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;text-align:center}
+.slide img{border-radius:12px;margin:0 auto 14px}
+.slide h2{font-size:32px;color:#fff;margin-bottom:8px}
+.slide p{color:var(--mut);font-size:15px;line-height:1.5}
+.dots{display:flex;gap:6px;justify-content:center;margin:16px 0}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.dot.on{background:var(--pink);width:20px;border-radius:5px}
+.medrow{display:flex;justify-content:center;gap:10px;margin:10px 0}
+.medrow img{width:60px;height:60px;object-fit:contain}
+.srow{display:flex;gap:8px;margin-top:8px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#000;border:1px solid var(--pink);color:#fff;
+       font-family:'Oswald';font-size:14px;padding:11px 18px;border-radius:30px;z-index:60;opacity:0;transition:.25s;pointer-events:none}
+.toast.on{opacity:1}
+.center{text-align:center}
+.spin{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--pink);border-radius:50%;animation:s 1s linear infinite;margin:30px auto}
+@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="inicio.html">🏠 Início</a>
+  <a href="index.html">⚽ Bolão</a>
+  <a href="home.html">🏆 Classificação</a>
+  <a href="palpites.html">👁️ Palpites</a>
+  <a href="pickem.html" class="on">🎯 Pick'Em</a>
+  <a href="perfil.html">👤 Perfil</a>
+</nav>
+
+<div class="wrap">
+  <div class="banner"><img src="pickem-banner.png" alt="Pick'Em da Copa"></div>
+
+  <!-- LOGIN -->
+  <div id="loginCard" class="card login" style="display:none">
+    <h2 style="font-size:28px">Entrar no Pick'Em</h2>
+    <p class="sub">Use o mesmo nome e PIN do bolão.</p>
+    <input id="liNome" placeholder="Seu nome" autocomplete="off">
+    <input id="liPin" placeholder="PIN" type="password" inputmode="numeric">
+    <div class="err" id="liErr"></div>
+    <button class="btn" onclick="fazerLogin()">Entrar</button>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loading" class="center"><div class="spin"></div><p class="sub">Carregando sua chave…</p></div>
+
+  <!-- APP -->
+  <div id="app" style="display:none">
+    <div id="lockbar"></div>
+
+    <div class="card">
+      <div class="medalbox">
+        <img id="medImg" src="medalha-pickem-bronze.png" alt="">
+        <div>
+          <div class="tiername" id="medName">Sua medalha</div>
+          <div class="sub" id="medDesc">Confirme sua chave para garantir o Bronze.</div>
+          <div class="prog" id="prog"></div>
+        </div>
+      </div>
+      <div class="rules">
+        <div class="rule">🥉 <b>Bronze</b> — chave confirmada</div>
+        <div class="rule">🥈 <b>Prata</b> — 12+ acertos</div>
+        <div class="rule">🥇 <b>Ouro</b> — 18+ acertos</div>
+        <div class="rule">💎 <b>Platina</b> — 23+ e campeão certo</div>
+      </div>
+      <p class="sub" style="margin-top:10px">🔒 Sua chave é secreta — ninguém vê seus palpites, só sua medalha. A medalha sobe sozinha conforme os jogos acontecem.</p>
+    </div>
+
+    <div id="aguardando" class="card center" style="display:none">
+      <h2 style="font-size:24px">Confrontos ainda não definidos</h2>
+      <p class="sub">Os 16 avos só aparecem quando a fase de grupos terminar. Volte logo antes de 28/06 pra montar sua chave! 🌸</p>
+    </div>
+
+    <div id="bracket"></div>
+
+    <div id="acoes" style="display:none">
+      <button class="btn" id="btnSalvar" onclick="confirmar()">Confirmar minha chave 🏆</button>
+      <button class="btn ghost" onclick="recomecar()">Recomeçar do zero</button>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDES -->
+<div class="ovl" id="ovl">
+  <div class="slide">
+    <div id="slideBody"></div>
+    <div class="dots" id="dots"></div>
+    <div class="srow">
+      <button class="btn ghost" style="margin:0" onclick="pularSlides()">Pular</button>
+      <button class="btn" style="margin:0" id="slideNext" onclick="proxSlide()">Próximo</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const EXEC = "https://script.google.com/macros/s/AKfycbyr5fXwBeGQKntrZv4L6WjkCSCYG5d3rlIrV85_i_wO_VZpb-SVhRmub7aVYCj0KPMDtA/exec";
+
+// fiação oficial Copa 2026
+const FEED = {
+  89:[74,77],90:[73,75],91:[76,78],92:[79,80],93:[83,84],94:[81,82],95:[86,88],96:[85,87],
+  97:[89,90],98:[93,94],99:[91,92],100:[95,96],101:[97,98],102:[99,100],104:[101,102]
+};
+const ROUNDS = [
+  {nome:'16 avos de final', curto:'16 avos', jogos:[73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88]},
+  {nome:'Oitavas de final', curto:'Oitavas', jogos:[89,90,91,92,93,94,95,96]},
+  {nome:'Quartas de final', curto:'Quartas', jogos:[97,98,99,100]},
+  {nome:'Semifinais', curto:'Semi', jogos:[101,102]}
+];
+const SLOTS = [73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,104];
+
+let NOME='', PIN='', JOGOS={}, PICKS={}, TRAVADO=false, saveTimer=null;
+
+/* ---------- auth / boot ---------- */
+function getStored(){
+  try{ const o=JSON.parse(localStorage.getItem('bolao_user')||'null');
+    if(o){ const n=o.nome||o.u||o.name; const p=o.pin||o.p; if(n&&p) return {nome:n,pin:p}; } }catch(e){}
+  return null;
+}
+async function api(payload){
+  const r = await fetch(EXEC,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+  return await r.json();
+}
+async function boot(){
+  const s=getStored();
+  if(!s){ show('loginCard'); hide('loading'); return; }
+  NOME=s.nome; PIN=s.pin;
+  await carregar();
+}
+async function fazerLogin(){
+  const n=document.getElementById('liNome').value.trim();
+  const p=document.getElementById('liPin').value.trim();
+  if(!n||!p){ document.getElementById('liErr').textContent='Preencha nome e PIN.'; return; }
+  document.getElementById('liErr').textContent='';
+  const res=await api({action:'pickemGet',nome:n,pin:p});
+  if(!res.ok){ document.getElementById('liErr').textContent='Nome ou PIN incorretos.'; return; }
+  NOME=n; PIN=p;
+  localStorage.setItem('bolao_user',JSON.stringify({nome:n,pin:p}));
+  hide('loginCard');
+  aplicar(res);
+}
+async function carregar(){
+  show('loading');
+  const res=await api({action:'pickemGet',nome:NOME,pin:PIN});
+  hide('loading');
+  if(!res.ok){ show('loginCard'); return; }
+  aplicar(res);
+}
+function aplicar(res){
+  JOGOS={}; (res.jogos||[]).forEach(g=>JOGOS[g.num]=g);
+  PICKS=res.picks||{};
+  TRAVADO=!!res.travado;
+  show('app');
+  // slides na 1ª vez
+  if(!localStorage.getItem('viu_intro_pickem') && !TRAVADO){ iniciarSlides(); }
+  renderMedalha(res.medalha);
+  render();
+}
+
+/* ---------- bracket ---------- */
+function candidatos(g){
+  if(g>=73 && g<=88){ const j=JOGOS[g]||{}; return [j.time1||'', j.time2||'']; }
+  const f=FEED[g]||[]; return [PICKS[f[0]]||'', PICKS[f[1]]||''];
+}
+function temConfrontos(){
+  for(let g=73; g<=88; g++){ const j=JOGOS[g]; if(j && j.time1 && j.time2) return true; }
+  return false;
+}
+function escolher(g,team){
+  if(TRAVADO||!team) return;
+  PICKS[g]=team;
+  cascata();
+  render();
+  agendarSave();
+}
+function cascata(){
+  // de cima pra baixo: se o vencedor escolhido não é mais candidato, apaga
+  const ordem=[89,90,91,92,93,94,95,96,97,98,99,100,101,102,104];
+  ordem.forEach(g=>{
+    if(PICKS[g]){
+      const c=candidatos(g).filter(Boolean);
+      if(c.indexOf(PICKS[g])===-1) delete PICKS[g];
+    }
+  });
+}
+function teamBtn(g,team){
+  if(!team) return '<button class="team empty">Defina a fase anterior</button>';
+  const sel=PICKS[g]===team;
+  const cls='team'+(sel?' sel':(PICKS[g]?' dim':''));
+  const oc=TRAVADO?'':`onclick="escolher(${g},'${esc(team)}')"`;
+  return `<button class="${cls}" ${oc}>${sel?'✓ ':''}${team}</button>`;
+}
+function render(){
+  const el=document.getElementById('bracket');
+  if(!temConfrontos()){
+    el.innerHTML='';
+    show('aguardando'); hide('acoes');
+    return;
+  }
+  hide('aguardando');
+  let html='';
+  ROUNDS.forEach(r=>{
+    html+=`<div class="round"><h2>${r.nome}</h2></div>`;
+    r.jogos.forEach(g=>{
+      const [a,b]=candidatos(g);
+      html+=`<div class="match ${TRAVADO?'locked':''}">
+        <div class="mt">Jogo ${g} · ${r.curto}</div>
+        ${teamBtn(g,a)}<div class="vs">— x —</div>${teamBtn(g,b)}
+      </div>`;
+    });
+  });
+  // campeão
+  const [c1,c2]=candidatos(104);
+  html+=`<div class="round"><h2>Final — o Campeão</h2></div>`;
+  if(!c1||!c2){
+    html+=`<div class="champ"><div class="lbl">CAMPEÃO</div><div class="name none">complete as semifinais</div></div>`;
+  }else{
+    html+=`<div class="match ${TRAVADO?'locked':''}"><div class="mt">Jogo 104 · Final</div>
+      ${teamBtn(104,c1)}<div class="vs">— x —</div>${teamBtn(104,c2)}</div>`;
+    if(PICKS[104]){
+      html+=`<div class="champ"><div class="lbl">🏆 SEU CAMPEÃO</div><div class="name">${PICKS[104]}</div></div>`;
+    }
+  }
+  el.innerHTML=html;
+
+  // progresso + ações
+  const feitas=SLOTS.filter(s=>PICKS[s]).length;
+  const prog=document.getElementById('prog');
+  if(TRAVADO){ prog.textContent='🔒 Chave travada — visualização apenas'; }
+  else if(feitas>=31){ prog.textContent='✅ Chave completa! Pode confirmar.'; }
+  else { prog.textContent='Faltam '+(31-feitas)+' escolha'+((31-feitas)>1?'s':''); }
+
+  document.getElementById('acoes').style.display = TRAVADO?'none':'block';
+  const bs=document.getElementById('btnSalvar');
+  if(bs){ bs.disabled = feitas<31; bs.textContent = feitas>=31 ? 'Confirmar minha chave 🏆' : 'Complete a chave para confirmar'; }
+
+  document.getElementById('lockbar').innerHTML = TRAVADO
+    ? '<div class="lockbar">🔒 O Pick\'Em travou — a fase começou. Sua chave está registrada.</div>' : '';
+}
+
+function renderMedalha(tier){
+  const img=document.getElementById('medImg'), nm=document.getElementById('medName'), ds=document.getElementById('medDesc');
+  const map={bronze:['medalha-pickem-bronze.png','Bronze','tier-bronze'],
+             prata:['medalha-pickem-prata.png','Prata','tier-prata'],
+             ouro:['medalha-pickem-ouro.png','Ouro','tier-ouro'],
+             platina:['medalha-pickem-platina.png','Platina','tier-platina']};
+  if(tier&&map[tier]){
+    img.src=map[tier][0]; img.style.display='block';
+    nm.textContent=map[tier][1]; nm.className='tiername '+map[tier][2];
+    ds.textContent='Sua medalha atual. Ela sobe sozinha se você acertar mais.';
+  }else{
+    img.style.display='none';
+    nm.textContent='Sem medalha ainda'; nm.className='tiername';
+    ds.textContent='Confirme sua chave completa para garantir o Bronze.';
+  }
+}
+
+/* ---------- salvar ---------- */
+function agendarSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(salvar,700); }
+async function salvar(silent){
+  const res=await api({action:'pickemSave',nome:NOME,pin:PIN,picks:PICKS});
+  if(res.ok){ renderMedalha(res.medalha); if(!silent) toast(res.confirmado?'Chave confirmada! 🏆':'Salvo'); }
+  else if(res.erro==='travado'){ TRAVADO=true; render(); toast('Travou — a fase começou'); }
+}
+function confirmar(){ salvar(false); }
+function recomecar(){
+  if(TRAVADO) return;
+  if(!confirm('Apagar todas as suas escolhas e começar do zero?')) return;
+  PICKS={}; render(); agendarSave();
+}
+
+/* ---------- slides ---------- */
+let slideIdx=0;
+const SLIDES=[
+  {img:'pickem-banner.png',h:"Pick'Em da Copa",p:"O Caminho do Campeão. Aqui você monta a chave INTEIRA do mata-mata e tenta adivinhar quem vai longe."},
+  {h:"Você escolhe quem avança",p:"Dos 16 avos até o campeão: 31 escolhas no total. Em cada confronto, toque no time que você acha que passa de fase."},
+  {h:"Não é placar",p:"Esquece o 2x1. Aqui é só QUEM PASSA. Simples assim — vai clicando e a chave se monta sozinha até a final."},
+  {h:"Trava quando começar",p:"Você pode mexer à vontade até a fase começar (28/06). Depois disso a chave fecha e vira só pra ver."},
+  {h:"É secreta 🔒",p:"Ninguém vê os seus palpites. A única coisa pública é a sua MEDALHA — então capricha."},
+  {medals:true,h:"Quatro medalhas",p:"Bronze: confirmar a chave. Prata: 12+ acertos. Ouro: 18+. Platina: 23+ e o campeão certo. A medalha sobe sozinha conforme os jogos rolam."},
+  {h:"Bora montar? 🏆",p:"Sua chave te espera. Toque em 'Começar' e construa o caminho do seu campeão."}
+];
+function iniciarSlides(){ slideIdx=0; document.getElementById('ovl').classList.add('on'); pintarSlide(); }
+function pintarSlide(){
+  const s=SLIDES[slideIdx];
+  let body='';
+  if(s.img) body+=`<img src="${s.img}" style="max-width:340px" alt="">`;
+  if(s.medals) body+=`<div class="medrow">
+    <img src="medalha-pickem-bronze.png"><img src="medalha-pickem-prata.png">
+    <img src="medalha-pickem-ouro.png"><img src="medalha-pickem-platina.png"></div>`;
+  body+=`<h2>${s.h}</h2><p>${s.p}</p>`;
+  document.getElementById('slideBody').innerHTML=body;
+  let dots=''; SLIDES.forEach((_,i)=>dots+=`<div class="dot ${i===slideIdx?'on':''}"></div>`);
+  document.getElementById('dots').innerHTML=dots;
+  document.getElementById('slideNext').textContent = slideIdx===SLIDES.length-1 ? 'Começar' : 'Próximo';
+}
+function proxSlide(){ if(slideIdx<SLIDES.length-1){ slideIdx++; pintarSlide(); } else pularSlides(); }
+function pularSlides(){ localStorage.setItem('viu_intro_pickem','1'); document.getElementById('ovl').classList.remove('on'); }
+
+/* ---------- util ---------- */
+function show(id){document.getElementById(id).style.display='block'}
+function hide(id){document.getElementById(id).style.display='none'}
+function esc(s){return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;')}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}
+
+boot();
+</script>
+</body>
+</html>

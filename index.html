@@ -88,6 +88,9 @@ nav a:hover,nav a.active{color:var(--gold);background:rgba(255,46,154,0.08)}
 .st-feito{background:rgba(255,46,154,0.12);color:var(--gold)}
 .st-fechado{background:rgba(136,146,164,0.12);color:var(--text-muted)}
 .st-confirmar{background:rgba(245,180,40,0.14);color:#f5c453}
+.st-aguard{background:rgba(136,146,164,0.12);color:var(--text-muted)}
+.jogo-card.aguard{opacity:.72;border-style:dashed}
+.time-nome.adef{color:var(--text-muted);font-style:italic}
 .jogo-times{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
 .time{display:flex;align-items:center;gap:8px;min-width:0}
 .time.t2{flex-direction:row-reverse;text-align:right}
@@ -362,6 +365,16 @@ function meuPalpite(num){return PALPITES.find(p=>String(p.jogo)===String(num)&&p
 function setFiltro(f){filtro=f;document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.f===f));renderJogos();}
 
 function cardJogo(j){
+  if(j.aguardando){
+    return `<div class="jogo-card aguard">
+      <div class="jogo-top"><span class="jogo-meta">Jogo ${j.num} · ${j.fase}${j.data?' · '+j.data:''}${j.hora?' · '+j.hora:''}</span><span class="jogo-status st-aguard">⏳ Aguardando</span></div>
+      <div class="jogo-times">
+        <div class="time t1"><span class="time-nome adef">${esc(j.time1)||'A definir'}</span></div>
+        <span class="jogo-vs">×</span>
+        <div class="time t2"><span class="time-nome adef">${esc(j.time2)||'A definir'}</span></div>
+      </div>
+      <div class="jogo-meu-palpite" style="color:var(--text-dim)">Abre pra palpite quando os classificados saírem.</div></div>`;
+  }
   const mp=meuPalpite(j.num);
   let statusHtml,palpiteHtml='',clik=false;
   if(j.aberto){
@@ -380,7 +393,7 @@ function cardJogo(j){
     if(mp){const v=(mp.gol1!=null&&mp.gol2!=null)?`${mp.gol1} × ${mp.gol2}`:'—';palpiteHtml=`<div class="jogo-meu-palpite">Seu palpite: ${v}${placar}</div>`;}
   }
   return `<div class="jogo-card ${clik?'clik':''}" ${clik?`onclick="abrirModal(${j.num})"`:''}>
-    <div class="jogo-top"><span class="jogo-meta">Jogo ${j.num} · R${j.rodada} · ${j.data} · ${j.hora}</span>${statusHtml}</div>
+    <div class="jogo-top"><span class="jogo-meta">Jogo ${j.num} · ${j.fase} · ${j.data} · ${j.hora}</span>${statusHtml}</div>
     <div class="jogo-times">
       <div class="time t1">${flag(j.time1)}<span class="time-nome">${esc(j.time1)}</span></div>
       <span class="jogo-vs">×</span>
@@ -388,18 +401,27 @@ function cardJogo(j){
     </div>${palpiteHtml}</div>`;
 }
 
+function popularFases(){
+  const sel=document.getElementById('sel-rod'); if(!sel)return;
+  const atual=sel.value;
+  const fases=[]; JOGOS.forEach(j=>{if(j.fase&&fases.indexOf(j.fase)<0)fases.push(j.fase);});
+  sel.innerHTML='<option value="0">Todas as fases</option>'+fases.map(f=>`<option value="${esc(f)}">${esc(f)}</option>`).join('');
+  if([...sel.options].some(o=>o.value===atual)) sel.value=atual;
+}
 function renderJogos(){
-  const rod=parseInt(document.getElementById('sel-rod').value)||0;
+  popularFases();
+  const faseSel=document.getElementById('sel-rod').value;
   const abertos=JOGOS.filter(j=>j.aberto);
+  const aguardando=JOGOS.filter(j=>j.aguardando);
   const pendentes=abertos.filter(j=>!meuPalpite(j.num));
   document.getElementById('c-pend').textContent=pendentes.length?`(${pendentes.length})`:'';
   document.getElementById('c-abert').textContent=abertos.length?`(${abertos.length})`:'';
 
   let lista;
   if(filtro==='pendentes') lista=pendentes;
-  else if(filtro==='abertos') lista=abertos;
-  else lista=JOGOS.filter(j=>!j.aberto && j.status!=='ao vivo');
-  if(rod) lista=lista.filter(j=>j.rodada===rod);
+  else if(filtro==='abertos') lista=abertos.concat(aguardando);
+  else lista=JOGOS.filter(j=>!j.aberto && !j.aguardando && j.status!=='ao vivo');
+  if(faseSel && faseSel!=='0') lista=lista.filter(j=>j.fase===faseSel);
 
   const vazio={pendentes:'Você está em dia! Nenhum palpite pendente. 🎉',abertos:'Nenhum jogo aberto agora.',fechados:'Nenhum jogo encerrado ainda.'}[filtro];
   document.getElementById('lista-jogos').innerHTML = lista.length?lista.map(cardJogo).join(''):`<div class="empty">${vazio}</div>`;
@@ -414,7 +436,7 @@ function renderAoVivo(){
     const s1=j.vivo1==null?0:j.vivo1, s2=j.vivo2==null?0:j.vivo2;
     const min=j.minuto?(/^\d+$/.test(j.minuto)?j.minuto+"'":esc(j.minuto)):'';
     return `<div class="jogo-card vivo" onclick="abrirPalpitesJogo(${j.num})" style="cursor:pointer">
-      <div class="jogo-top"><span class="jogo-meta">Jogo ${j.num} · R${j.rodada}${metaExtra(j.num)}</span><span class="vivo-badge"><span class="vivo-dot"></span>Ao vivo ${min}</span></div>
+      <div class="jogo-top"><span class="jogo-meta">Jogo ${j.num} · ${j.fase}${metaExtra(j.num)}</span><span class="vivo-badge"><span class="vivo-dot"></span>Ao vivo ${min}</span></div>
       <div class="jogo-times">
         <div class="time t1">${flag(j.time1)}<span class="time-nome">${esc(j.time1)}</span></div>
         <span class="placar-vivo">${s1} × ${s2}</span>
@@ -506,6 +528,47 @@ function toast(msg,tipo){const t=document.getElementById('toast');t.textContent=
   if(usuario)renderLogado();   // mostra a área logada NA HORA (sem flash de login no celular)
   await carregar();
   setInterval(carregar,30000);
+})();
+</script>
+<script>
+/* Pick'Em widget: link no menu (todas) + badge da medalha (perfil/inicio) */
+(async function(){
+  if(window.__pkWidget) return; window.__pkWidget=1;
+  var EXEC="https://script.google.com/macros/s/AKfycbyr5fXwBeGQKntrZv4L6WjkCSCYG5d3rlIrV85_i_wO_VZpb-SVhRmub7aVYCj0KPMDtA/exec";
+  try{
+    var nav=document.querySelector('nav');
+    if(nav && !nav.querySelector('a[href="pickem.html"]')){
+      var a=document.createElement('a'); a.href='pickem.html'; a.textContent="🎯 Pick'Em";
+      var perfil=nav.querySelector('a[href="perfil.html"]');
+      if(perfil) nav.insertBefore(a, perfil); else nav.appendChild(a);
+    }
+  }catch(e){}
+  if(!/perfil|inicio/i.test(location.pathname)) return;
+  var me=null; try{var o=JSON.parse(localStorage.getItem('bolao_user')||'null'); me=o&&(o.nome||o.u||o.name);}catch(e){}
+  var medals=[]; try{
+    var r=await fetch(EXEC,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'pickemMedals'})});
+    var j=await r.json(); medals=(j&&j.medals)||[];
+  }catch(e){ return; }
+  var mine = me ? medals.find(function(m){return String(m.nome).toLowerCase()===String(me).toLowerCase();}) : null;
+  var tier = mine? mine.medalha : '';
+  var map={bronze:['medalha-pickem-bronze.png','Bronze','#C98A4B'],prata:['medalha-pickem-prata.png','Prata','#cfd2d8'],ouro:['medalha-pickem-ouro.png','Ouro','#E9C13B'],platina:['medalha-pickem-platina.png','Platina','#d8b8e8']};
+  var card=document.createElement('div');
+  card.style.cssText='max-width:760px;margin:14px auto;padding:14px;background:#17171e;border:1px solid #2a2a34;border-radius:14px;display:flex;align-items:center;gap:14px;font-family:Inter,sans-serif;color:#f4f4f7;box-shadow:0 0 18px rgba(255,46,154,.12)';
+  var inner;
+  if(tier&&map[tier]){
+    inner='<img src="'+map[tier][0]+'" style="width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(255,46,154,.35))">'
+      +'<div style="flex:1"><div style="font-family:Oswald,sans-serif;font-size:11px;color:#9a9aa8;letter-spacing:1px">PICK\u0027EM DA COPA</div>'
+      +'<div style="font-family:\u0027Bebas Neue\u0027,sans-serif;font-size:30px;color:'+map[tier][2]+';line-height:1">'+map[tier][1]+'</div></div>'
+      +'<a href="pickem.html" style="color:#FF6FC0;font-size:13px;text-decoration:none;font-family:Oswald,sans-serif">ver chave \u2192</a>';
+  }else{
+    inner='<div style="font-size:34px">🎯</div>'
+      +'<div style="flex:1"><div style="font-family:Oswald,sans-serif;font-size:11px;color:#9a9aa8;letter-spacing:1px">PICK\u0027EM DA COPA</div>'
+      +'<div style="font-family:\u0027Bebas Neue\u0027,sans-serif;font-size:26px;color:#fff;line-height:1">Monte sua chave</div></div>'
+      +'<a href="pickem.html" style="color:#FF6FC0;font-size:13px;text-decoration:none;font-family:Oswald,sans-serif">jogar \u2192</a>';
+  }
+  card.innerHTML=inner;
+  var anchor=document.querySelector('.wrap')||document.body;
+  anchor.insertBefore(card, anchor.firstChild);
 })();
 </script>
 </body>
