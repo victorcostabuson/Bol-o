@@ -191,7 +191,7 @@ const ROUNDS = [
 ];
 const SLOTS = [73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,104];
 
-let NOME='', PIN='', JOGOS={}, PICKS={}, TRAVADO=false, saveTimer=null;
+let NOME='', PIN='', JOGOS={}, PICKS={}, LOCKED=false, INICIADOS=new Set(), FORFEIT=new Set(), saveTimer=null;
 
 /* ---------- auth / boot ---------- */
 function getStored(){
@@ -231,10 +231,11 @@ async function carregar(){
 function aplicar(res){
   JOGOS={}; (res.jogos||[]).forEach(g=>JOGOS[g.num]=g);
   PICKS=res.picks||{};
-  TRAVADO=!!res.travado;
+  LOCKED=!!res.locked;
+  INICIADOS=new Set(res.iniciados||[]);
+  FORFEIT=new Set(res.forfeit||[]);
   show('app');
-  // slides na 1ª vez
-  if(!localStorage.getItem('viu_intro_pickem') && !TRAVADO){ iniciarSlides(); }
+  if(!localStorage.getItem('viu_intro_pickem') && !LOCKED){ iniciarSlides(); }
   renderMedalha(res.medalha);
   render();
 }
@@ -249,14 +250,13 @@ function temConfrontos(){
   return false;
 }
 function escolher(g,team){
-  if(TRAVADO||!team) return;
+  if(LOCKED||!team) return;
   PICKS[g]=team;
   cascata();
   render();
   agendarSave();
 }
 function cascata(){
-  // de cima pra baixo: se o vencedor escolhido não é mais candidato, apaga
   const ordem=[89,90,91,92,93,94,95,96,97,98,99,100,101,102,104];
   ordem.forEach(g=>{
     if(PICKS[g]){
@@ -265,11 +265,16 @@ function cascata(){
     }
   });
 }
+function notaJogo(g){
+  if(LOCKED && FORFEIT.has(g)) return ' <span style="color:#ff9a9a">· não contou (você entrou depois)</span>';
+  if(!LOCKED && INICIADOS.has(g)) return ' <span style="color:#ffd36b">· ⚠ já começou, não pontua p/ você</span>';
+  return '';
+}
 function teamBtn(g,team){
   if(!team) return '<button class="team empty">Defina a fase anterior</button>';
   const sel=PICKS[g]===team;
   const cls='team'+(sel?' sel':(PICKS[g]?' dim':''));
-  const oc=TRAVADO?'':`onclick="escolher(${g},'${esc(team)}')"`;
+  const oc=LOCKED?'':`onclick="escolher(${g},'${esc(team)}')"`;
   return `<button class="${cls}" ${oc}>${sel?'✓ ':''}${team}</button>`;
 }
 function render(){
@@ -285,19 +290,18 @@ function render(){
     html+=`<div class="round"><h2>${r.nome}</h2></div>`;
     r.jogos.forEach(g=>{
       const [a,b]=candidatos(g);
-      html+=`<div class="match ${TRAVADO?'locked':''}">
-        <div class="mt">Jogo ${g} · ${r.curto}</div>
+      html+=`<div class="match ${LOCKED?'locked':''}">
+        <div class="mt">Jogo ${g} · ${r.curto}${notaJogo(g)}</div>
         ${teamBtn(g,a)}<div class="vs">— x —</div>${teamBtn(g,b)}
       </div>`;
     });
   });
-  // campeão
   const [c1,c2]=candidatos(104);
   html+=`<div class="round"><h2>Final — o Campeão</h2></div>`;
   if(!c1||!c2){
     html+=`<div class="champ"><div class="lbl">CAMPEÃO</div><div class="name none">complete as semifinais</div></div>`;
   }else{
-    html+=`<div class="match ${TRAVADO?'locked':''}"><div class="mt">Jogo 104 · Final</div>
+    html+=`<div class="match ${LOCKED?'locked':''}"><div class="mt">Jogo 104 · Final${notaJogo(104)}</div>
       ${teamBtn(104,c1)}<div class="vs">— x —</div>${teamBtn(104,c2)}</div>`;
     if(PICKS[104]){
       html+=`<div class="champ"><div class="lbl">🏆 SEU CAMPEÃO</div><div class="name">${PICKS[104]}</div></div>`;
@@ -305,19 +309,24 @@ function render(){
   }
   el.innerHTML=html;
 
-  // progresso + ações
   const feitas=SLOTS.filter(s=>PICKS[s]).length;
   const prog=document.getElementById('prog');
-  if(TRAVADO){ prog.textContent='🔒 Chave travada — visualização apenas'; }
+  if(LOCKED){ prog.textContent='🔒 Chave confirmada e travada — visualização apenas'; }
   else if(feitas>=31){ prog.textContent='✅ Chave completa! Pode confirmar.'; }
   else { prog.textContent='Faltam '+(31-feitas)+' escolha'+((31-feitas)>1?'s':''); }
 
-  document.getElementById('acoes').style.display = TRAVADO?'none':'block';
+  document.getElementById('acoes').style.display = LOCKED?'none':'block';
   const bs=document.getElementById('btnSalvar');
-  if(bs){ bs.disabled = feitas<31; bs.textContent = feitas>=31 ? 'Confirmar minha chave 🏆' : 'Complete a chave para confirmar'; }
+  if(bs){ bs.disabled = feitas<31; bs.textContent = feitas>=31 ? 'Confirmar e travar minha chave 🏆' : 'Complete a chave para confirmar'; }
 
-  document.getElementById('lockbar').innerHTML = TRAVADO
-    ? '<div class="lockbar">🔒 O Pick\'Em travou — a fase começou. Sua chave está registrada.</div>' : '';
+  // barra de aviso
+  let bar='';
+  if(LOCKED){
+    bar='<div class="lockbar">🔒 Sua chave está confirmada e travada.</div>';
+  } else if(INICIADOS.size>0){
+    bar='<div class="lockbar">⏱️ Você está montando depois do início. Os '+INICIADOS.size+' jogo(s) que já começaram <b>não vão pontuar</b> pra você — mas dá pra ganhar medalha com o resto! Quando terminar, toque em <b>Confirmar</b>.</div>';
+  }
+  document.getElementById('lockbar').innerHTML = bar;
 }
 
 function renderMedalha(tier){
@@ -338,15 +347,25 @@ function renderMedalha(tier){
 }
 
 /* ---------- salvar ---------- */
-function agendarSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(salvar,700); }
-async function salvar(silent){
-  const res=await api({action:'pickemSave',nome:NOME,pin:PIN,picks:PICKS});
-  if(res.ok){ renderMedalha(res.medalha); if(!silent) toast(res.confirmado?'Chave confirmada! 🏆':'Salvo'); }
-  else if(res.erro==='travado'){ TRAVADO=true; render(); toast('Travou — a fase começou'); }
+function agendarSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>salvar(true,false),700); }
+async function salvar(silent, commit){
+  const res=await api({action:'pickemSave',nome:NOME,pin:PIN,picks:PICKS,commit:commit===true});
+  if(res.ok){
+    renderMedalha(res.medalha);
+    if(res.confirmado){ LOCKED=true; FORFEIT=new Set(res.forfeit||[]); render(); }
+    if(!silent) toast(res.confirmado?'Chave confirmada e travada! 🏆':'Salvo');
+  } else if(res.erro==='travado'){ LOCKED=true; render(); toast('Sua chave já está travada'); }
 }
-function confirmar(){ salvar(false); }
+function confirmar(){
+  if(LOCKED) return;
+  const aviso = INICIADOS.size>0
+    ? 'Confirmar TRAVA sua chave (não dá mais pra mexer).\nOs '+INICIADOS.size+' jogo(s) que já começaram não vão pontuar pra você.\n\nConfirmar mesmo assim?'
+    : 'Confirmar TRAVA sua chave e não dá mais pra mexer. Confirmar?';
+  if(!confirm(aviso)) return;
+  salvar(false,true);
+}
 function recomecar(){
-  if(TRAVADO) return;
+  if(LOCKED) return;
   if(!confirm('Apagar todas as suas escolhas e começar do zero?')) return;
   PICKS={}; render(); agendarSave();
 }
