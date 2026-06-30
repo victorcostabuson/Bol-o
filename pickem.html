@@ -8,90 +8,96 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --pink:#FF2E9A; --pink-l:#FF6FC0; --pink-d:#C01878;
-  --bg:#0a0a0d; --bg2:#141419; --card:#17171e; --line:#2a2a34;
-  --txt:#f4f4f7; --mut:#9a9aa8;
-  --bronze:#C98A4B; --prata:#cfd2d8; --ouro:#E9C13B; --platina:#d8b8e8;
+  --pink:#ff2aa3; --pink-l:#ff7bc8; --pink-d:#9b1261; --soft:rgba(255,42,163,.42);
+  --bg:#050509; --bg2:#13141b; --card:#17171e; --line:#2a2a34;
+  --txt:#f7f2f7; --mut:#9c9aa6; --ouro:#E9C13B; --ok:#2fd17a; --no:#ff5a7a;
+  --bronze:#C98A4B; --prata:#cfd2d8; --platina:#d8b8e8; --border:rgba(255,255,255,.12);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
-img{max-width:100%;display:block}
+body{background:#020205;color:var(--txt);font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+img{display:block}
 a{color:inherit;text-decoration:none}
-.wrap{max-width:760px;margin:0 auto;padding:0 14px 80px}
-
-/* nav */
-nav{display:flex;gap:6px;overflow-x:auto;padding:10px 6px;background:#000;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+.wrap{max-width:1000px;margin:0 auto;padding:0 12px 90px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:10px 6px;background:#000;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30}
 nav a{flex:0 0 auto;font-family:'Oswald';font-weight:500;font-size:13px;color:var(--mut);padding:7px 12px;border-radius:8px;border:1px solid transparent;white-space:nowrap}
 nav a.on{color:#fff;background:linear-gradient(135deg,var(--pink-d),var(--pink));border-color:var(--pink)}
-
-/* banner */
-.banner{margin:14px 0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 0 30px rgba(255,46,154,.15)}
-
+.banner{margin:14px 0;border-radius:16px;overflow:hidden;border:1px solid var(--border);box-shadow:0 0 30px rgba(255,42,163,.18)}
+.banner img{width:100%}
 h1,h2,h3{font-family:'Bebas Neue';letter-spacing:1px;font-weight:400}
 .sub{color:var(--mut);font-size:13px}
-
-/* cards */
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
-
-/* medal status */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin:12px 0}
 .medalbox{display:flex;gap:14px;align-items:center}
-.medalbox img{width:84px;height:84px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,46,154,.35))}
+.medalbox img{width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,42,163,.35))}
 .tiername{font-family:'Bebas Neue';font-size:30px;line-height:1}
 .tier-bronze{color:var(--bronze)} .tier-prata{color:var(--prata)} .tier-ouro{color:var(--ouro)} .tier-platina{color:var(--platina)}
-.rules{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
-.rule{font-size:12px;color:var(--mut);background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:7px 9px}
-.rule b{color:var(--txt);font-weight:700}
-
-/* progress */
 .prog{font-family:'Oswald';font-size:14px;color:var(--pink-l);margin:4px 0 0}
-.lockbar{background:linear-gradient(135deg,#3a1020,#241018);border:1px solid var(--pink-d);color:var(--pink-l);font-family:'Oswald';font-size:13px;padding:10px 14px;border-radius:10px;margin:10px 0;text-align:center}
-
-/* rounds */
-.round{margin:22px 0 8px}
-.round h2{font-size:26px;color:#fff;border-left:4px solid var(--pink);padding-left:10px}
-.match{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:9px 0}
-.match .mt{font-family:'Oswald';font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
-.team{width:100%;text-align:left;background:var(--bg2);border:1.5px solid var(--line);color:var(--txt);
-      font-family:'Oswald';font-weight:500;font-size:15px;padding:12px 14px;border-radius:9px;cursor:pointer;transition:.12s}
-.team:active{transform:scale(.99)}
-.team.sel{background:linear-gradient(135deg,var(--pink-d),var(--pink));border-color:var(--pink);color:#fff;font-weight:700;box-shadow:0 0 14px rgba(255,46,154,.3)}
-.team.dim{opacity:.5}
-.team.empty{color:var(--mut);font-style:italic;cursor:default}
-.vs{text-align:center;color:var(--mut);font-size:11px;margin:5px 0;font-family:'Oswald'}
-.locked .team{cursor:default}
-
-/* champion */
-.champ{background:linear-gradient(135deg,#241018,#1a1020);border:1.5px solid var(--ouro);border-radius:14px;padding:18px;text-align:center;margin:10px 0}
-.champ .lbl{font-family:'Oswald';color:var(--ouro);font-size:12px;letter-spacing:1px}
-.champ .name{font-family:'Bebas Neue';font-size:40px;color:#fff;line-height:1;margin-top:4px}
-.champ .name.none{color:var(--mut);font-size:24px}
-
-/* buttons */
-.btn{display:block;width:100%;font-family:'Oswald';font-weight:700;font-size:16px;letter-spacing:.5px;
-     padding:15px;border:none;border-radius:12px;cursor:pointer;color:#fff;
-     background:linear-gradient(135deg,var(--pink-d),var(--pink));box-shadow:0 0 20px rgba(255,46,154,.3)}
-.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--mut);box-shadow:none;font-weight:500;font-size:13px;padding:11px;margin-top:10px}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.rule{font-size:12px;color:var(--mut);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:7px 9px}
+.rule b{color:var(--txt)}
+.lockbar{background:linear-gradient(135deg,#3a1020,#241018);border:1px solid var(--pink-d);color:var(--pink-l);font-family:'Oswald';font-size:13px;padding:10px 14px;border-radius:10px;margin:10px 0;text-align:center;line-height:1.4}
+.score{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#141625,#1a1030);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin:10px 0}
+.score .big{font-family:'Bebas Neue';font-size:40px;line-height:.9;color:var(--ok)}
+.score .lbl{font-family:'Oswald';font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+.score .hint{font-size:12px;color:var(--mut)}
+/* ===== BRACKET (estilo Shuriks neon) ===== */
+.brkhint{font-family:'Oswald';font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin:6px 2px}
+.bwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:16px 6px;border:1px solid var(--border);border-radius:16px;
+  background:radial-gradient(circle at 50% 0%,rgba(255,42,163,.16),transparent 30%),linear-gradient(180deg,#0b0c14,#050509 60%,#020205)}
+.bracket-grid{display:flex;align-items:stretch;gap:14px;min-width:1320px;padding:6px}
+.side{display:flex;gap:16px;flex:1}
+.round-column{display:flex;flex-direction:column;flex:1;min-width:150px}
+.round-column h3{font-family:'Oswald';font-weight:700;text-align:center;color:var(--pink);font-size:13px;text-transform:uppercase;letter-spacing:.16em;margin-bottom:12px}
+.round-stack{flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:12px}
+.match-card{position:relative;background:linear-gradient(180deg,rgba(40,42,52,.82),rgba(9,10,15,.9));border:1px solid var(--border);border-radius:14px;padding:8px;box-shadow:inset 0 0 0 1px rgba(255,42,163,.05),0 4px 14px rgba(0,0,0,.4)}
+.match-card::after{content:"";position:absolute;right:-16px;top:50%;width:16px;height:2px;background:var(--soft);box-shadow:0 0 8px var(--soft)}
+.right-side .match-card::after{left:-16px;right:auto}
+.match-card.locked{opacity:.92}
+.match-card.hit{border-color:var(--ok);box-shadow:0 0 16px rgba(47,209,122,.32),inset 0 0 0 1px rgba(47,209,122,.5);background:linear-gradient(180deg,rgba(20,52,38,.85),rgba(9,15,12,.9))}
+.match-card.miss{border-color:var(--no);box-shadow:0 0 16px rgba(255,90,122,.32),inset 0 0 0 1px rgba(255,90,122,.5);background:linear-gradient(180deg,rgba(52,20,30,.85),rgba(15,9,11,.9))}
+.match-card.naoconta{opacity:.55;filter:grayscale(.4)}
+.match-slot{color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;text-align:center}
+.team{width:100%;display:grid;grid-template-columns:26px 1fr 12px;align-items:center;gap:7px;padding:7px 8px;margin-top:5px;
+  text-align:left;background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:.15s}
+.team:first-of-type{margin-top:0}
+.team.selected{background:linear-gradient(135deg,var(--pink-d),var(--pink));border-color:var(--pink-l);box-shadow:0 0 16px rgba(255,42,163,.4);font-weight:700}
+.team.real{box-shadow:inset 3px 0 0 var(--ouro)}
+.team.empty{color:var(--mut);cursor:default}
+.team .flag{display:flex;align-items:center;justify-content:center;font-size:16px}
+.team .flag img{width:24px;height:16px;object-fit:cover;border-radius:2px;background:#222}
+.team-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Oswald';font-size:12.5px}
+.chevron{color:var(--pink);font-size:16px;font-weight:700}
+.team.selected .chevron{color:#fff}
+.result-chip{margin-top:7px;font-size:10px;color:#ffd7ef;border-top:1px solid var(--border);padding-top:6px;display:flex;align-items:center;gap:5px}
+.result-chip img{width:16px;height:11px;object-fit:cover;border-radius:1px}
+.bdg{position:absolute;top:-8px;right:-8px;width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;border:2px solid var(--bg);z-index:2}
+.bdg.ok{background:var(--ok)} .bdg.no{background:var(--no)} .bdg.wait{background:#7a6a2a;font-size:11px}
+.center-stage{display:flex;flex-direction:column;justify-content:center;gap:16px;min-width:230px}
+.center-stage h3{text-align:center;color:var(--pink);font-size:14px;text-transform:uppercase;letter-spacing:.18em}
+.champion-box{background:linear-gradient(180deg,rgba(255,42,163,.18),rgba(18,18,26,.85));border:1px solid rgba(255,42,163,.55);border-radius:18px;padding:14px;box-shadow:0 0 35px rgba(255,42,163,.2)}
+.champion-title{text-align:center;color:var(--pink);text-transform:uppercase;letter-spacing:.18em;margin-bottom:10px;font-family:'Oswald';font-weight:700;font-size:13px}
+.paw{font-size:46px;text-align:center;filter:drop-shadow(0 0 16px rgba(255,42,163,.6))}
+/* legenda */
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;color:var(--mut);font-size:12px;margin:12px 0;padding:12px;background:rgba(8,9,13,.7);border:1px solid var(--border);border-radius:12px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;background:#6b6974;margin-right:6px;vertical-align:middle}
+.legend .s{background:var(--pink);box-shadow:0 0 10px var(--pink)} .legend .g{background:var(--ouro)} .legend .o{background:var(--ok)}
+.btn{display:block;width:100%;font-family:'Oswald';font-weight:700;font-size:16px;letter-spacing:.5px;padding:15px;border:none;border-radius:12px;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--pink-d),var(--pink));box-shadow:0 0 22px rgba(255,42,163,.35)}
+.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--mut);box-shadow:none;font-weight:500;font-size:13px;padding:11px;margin-top:10px}
 .btn[disabled]{opacity:.5;cursor:default;box-shadow:none}
-
-/* login */
-.login input{width:100%;padding:13px;margin:7px 0;background:var(--bg2);border:1px solid var(--line);border-radius:10px;color:#fff;font-size:15px;font-family:'Inter'}
+.login input{width:100%;padding:13px;margin:7px 0;background:var(--bg2);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:15px}
 .err{color:#ff7a9c;font-size:13px;margin:6px 0;min-height:18px}
-
-/* slides */
-.ovl{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:50;display:none;align-items:center;justify-content:center;padding:18px}
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:50;display:none;align-items:center;justify-content:center;padding:18px}
 .ovl.on{display:flex}
-.slide{max-width:520px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;text-align:center}
-.slide img{border-radius:12px;margin:0 auto 14px}
+.slide{max-width:520px;width:100%;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;text-align:center}
+.slide img{border-radius:12px;margin:0 auto 14px;max-width:100%}
 .slide h2{font-size:32px;color:#fff;margin-bottom:8px}
 .slide p{color:var(--mut);font-size:15px;line-height:1.5}
 .dots{display:flex;gap:6px;justify-content:center;margin:16px 0}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
 .dot.on{background:var(--pink);width:20px;border-radius:5px}
 .medrow{display:flex;justify-content:center;gap:10px;margin:10px 0}
-.medrow img{width:60px;height:60px;object-fit:contain}
+.medrow img{width:58px;height:58px;object-fit:contain}
 .srow{display:flex;gap:8px;margin-top:8px}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#000;border:1px solid var(--pink);color:#fff;
-       font-family:'Oswald';font-size:14px;padding:11px 18px;border-radius:30px;z-index:60;opacity:0;transition:.25s;pointer-events:none}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#000;border:1px solid var(--pink);color:#fff;font-family:'Oswald';font-size:14px;padding:11px 18px;border-radius:30px;z-index:60;opacity:0;transition:.25s;pointer-events:none}
 .toast.on{opacity:1}
 .center{text-align:center}
 .spin{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--pink);border-radius:50%;animation:s 1s linear infinite;margin:30px auto}
@@ -99,7 +105,6 @@ h1,h2,h3{font-family:'Bebas Neue';letter-spacing:1px;font-weight:400}
 </style>
 </head>
 <body>
-
 <nav>
   <a href="inicio.html">🏠 Início</a>
   <a href="index.html">⚽ Bolão</a>
@@ -112,7 +117,6 @@ h1,h2,h3{font-family:'Bebas Neue';letter-spacing:1px;font-weight:400}
 <div class="wrap">
   <div class="banner"><img src="pickem-banner.png" alt="Pick'Em da Copa"></div>
 
-  <!-- LOGIN -->
   <div id="loginCard" class="card login" style="display:none">
     <h2 style="font-size:28px">Entrar no Pick'Em</h2>
     <p class="sub">Use o mesmo nome e PIN do bolão.</p>
@@ -122,10 +126,8 @@ h1,h2,h3{font-family:'Bebas Neue';letter-spacing:1px;font-weight:400}
     <button class="btn" onclick="fazerLogin()">Entrar</button>
   </div>
 
-  <!-- LOADING -->
   <div id="loading" class="center"><div class="spin"></div><p class="sub">Carregando sua chave…</p></div>
 
-  <!-- APP -->
   <div id="app" style="display:none">
     <div id="lockbar"></div>
 
@@ -144,15 +146,24 @@ h1,h2,h3{font-family:'Bebas Neue';letter-spacing:1px;font-weight:400}
         <div class="rule">🥇 <b>Ouro</b> — 18+ acertos</div>
         <div class="rule">💎 <b>Platina</b> — 23+ e campeão certo</div>
       </div>
-      <p class="sub" style="margin-top:10px">🔒 Sua chave é secreta — ninguém vê seus palpites, só sua medalha. A medalha sobe sozinha conforme os jogos acontecem.</p>
     </div>
+
+    <div id="resumo"></div>
 
     <div id="aguardando" class="card center" style="display:none">
       <h2 style="font-size:24px">Confrontos ainda não definidos</h2>
-      <p class="sub">Os 16 avos só aparecem quando a fase de grupos terminar. Volte logo antes de 28/06 pra montar sua chave! 🌸</p>
+      <p class="sub">Os 16 avos só aparecem quando a fase de grupos terminar. 🌸</p>
     </div>
 
+    <div id="brkhint" class="brkhint" style="display:none">deslize a chave pros lados → · toque no time que avança</div>
     <div id="bracket"></div>
+
+    <div id="legenda" class="legend" style="display:none">
+      <span><i class="s"></i> Seu palpite</span>
+      <span><i class="g"></i> Quem passou de verdade</span>
+      <span><i class="o"></i> Você acertou (✓)</span>
+      <span><i></i> Disponível</span>
+    </div>
 
     <div id="acoes" style="display:none">
       <button class="btn" id="btnSalvar" onclick="confirmar()">Confirmar minha chave 🏆</button>
@@ -161,7 +172,6 @@ h1,h2,h3{font-family:'Bebas Neue';letter-spacing:1px;font-weight:400}
   </div>
 </div>
 
-<!-- SLIDES -->
 <div class="ovl" id="ovl">
   <div class="slide">
     <div id="slideBody"></div>
@@ -172,54 +182,66 @@ h1,h2,h3{font-family:'Bebas Neue';letter-spacing:1px;font-weight:400}
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
 const EXEC = "https://script.google.com/macros/s/AKfycbyr5fXwBeGQKntrZv4L6WjkCSCYG5d3rlIrV85_i_wO_VZpb-SVhRmub7aVYCj0KPMDtA/exec";
 
-// fiação oficial Copa 2026
 const FEED = {
   89:[74,77],90:[73,75],91:[76,78],92:[79,80],93:[83,84],94:[81,82],95:[86,88],96:[85,87],
   97:[89,90],98:[93,94],99:[91,92],100:[95,96],101:[97,98],102:[99,100],104:[101,102]
 };
-const ROUNDS = [
-  {nome:'16 avos de final', curto:'16 avos', jogos:[73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88]},
-  {nome:'Oitavas de final', curto:'Oitavas', jogos:[89,90,91,92,93,94,95,96]},
-  {nome:'Quartas de final', curto:'Quartas', jogos:[97,98,99,100]},
-  {nome:'Semifinais', curto:'Semi', jogos:[101,102]}
-];
 const SLOTS = [73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,104];
 
-let NOME='', PIN='', JOGOS={}, PICKS={}, LOCKED=false, INICIADOS=new Set(), FORFEIT=new Set(), saveTimer=null;
+const LEFTCOLS = [
+  {h:'16 avos', g:[74,77,73,75,83,84,81,82]},
+  {h:'Oitavas', g:[89,90,93,94]},
+  {h:'Quartas', g:[97,98]},
+  {h:'Semi',    g:[101]}
+];
+const RIGHTCOLS = [
+  {h:'Semi',    g:[102]},
+  {h:'Quartas', g:[99,100]},
+  {h:'Oitavas', g:[91,92,95,96]},
+  {h:'16 avos', g:[76,78,79,80,86,88,85,87]}
+];
 
-/* ---------- auth / boot ---------- */
+const FLAGS = {
+  'África do Sul':'za','Canadá':'ca','Alemanha':'de','Paraguai':'py','Holanda':'nl','Marrocos':'ma',
+  'Brasil':'br','Japão':'jp','França':'fr','Suécia':'se','Costa do Marfim':'ci','Noruega':'no',
+  'México':'mx','Equador':'ec','Inglaterra':'gb-eng','RD Congo':'cd','Estados Unidos':'us',
+  'Bósnia e Herzegovina':'ba','Bélgica':'be','Senegal':'sn','Portugal':'pt','Croácia':'hr',
+  'Espanha':'es','Áustria':'at','Suíça':'ch','Argélia':'dz','Argentina':'ar','Cabo Verde':'cv',
+  'Colômbia':'co','Gana':'gh','Austrália':'au','Egito':'eg'
+};
+const CURTO = {'Bósnia e Herzegovina':'Bósnia','Estados Unidos':'EUA','Costa do Marfim':'C.Marfim','Cabo Verde':'C.Verde','África do Sul':'Á.do Sul'};
+function flagImg(t,w){ const c=FLAGS[t]; if(!c) return '🐾'; return `<img src="https://flagcdn.com/w40/${c}.png" alt="" onerror="this.replaceWith('🐾')">`; }
+function curto(t){ return CURTO[t]||t; }
+
+let NOME='', PIN='', JOGOS={}, PICKS={}, REAL={}, LOCKED=false, INICIADOS=new Set(), FORFEIT=new Set(), saveTimer=null;
+
+/* ---- auth ---- */
 function getStored(){
   try{ const o=JSON.parse(localStorage.getItem('bolao_user')||'null');
     if(o){ const n=o.nome||o.u||o.name; const p=o.pin||o.p; if(n&&p) return {nome:n,pin:p}; } }catch(e){}
   return null;
 }
-async function api(payload){
-  const r = await fetch(EXEC,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+async function api(p){
+  const r=await fetch(EXEC,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p)});
   return await r.json();
 }
 async function boot(){
   const s=getStored();
   if(!s){ show('loginCard'); hide('loading'); return; }
-  NOME=s.nome; PIN=s.pin;
-  await carregar();
+  NOME=s.nome; PIN=s.pin; await carregar();
 }
 async function fazerLogin(){
-  const n=document.getElementById('liNome').value.trim();
-  const p=document.getElementById('liPin').value.trim();
+  const n=document.getElementById('liNome').value.trim(), p=document.getElementById('liPin').value.trim();
   if(!n||!p){ document.getElementById('liErr').textContent='Preencha nome e PIN.'; return; }
-  document.getElementById('liErr').textContent='';
   const res=await api({action:'pickemGet',nome:n,pin:p});
   if(!res.ok){ document.getElementById('liErr').textContent='Nome ou PIN incorretos.'; return; }
-  NOME=n; PIN=p;
-  localStorage.setItem('bolao_user',JSON.stringify({nome:n,pin:p}));
-  hide('loginCard');
-  aplicar(res);
+  NOME=n; PIN=p; localStorage.setItem('bolao_user',JSON.stringify({nome:n,pin:p}));
+  hide('loginCard'); aplicar(res);
 }
 async function carregar(){
   show('loading');
@@ -230,7 +252,7 @@ async function carregar(){
 }
 function aplicar(res){
   JOGOS={}; (res.jogos||[]).forEach(g=>JOGOS[g.num]=g);
-  PICKS=res.picks||{};
+  PICKS=res.picks||{}; REAL=res.real||{};
   LOCKED=!!res.locked;
   INICIADOS=new Set(res.iniciados||[]);
   FORFEIT=new Set(res.forfeit||[]);
@@ -240,118 +262,113 @@ function aplicar(res){
   render();
 }
 
-/* ---------- bracket ---------- */
+/* ---- bracket logic ---- */
 function candidatos(g){
   if(g>=73 && g<=88){ const j=JOGOS[g]||{}; return [j.time1||'', j.time2||'']; }
   const f=FEED[g]||[]; return [PICKS[f[0]]||'', PICKS[f[1]]||''];
 }
 function temConfrontos(){
-  for(let g=73; g<=88; g++){ const j=JOGOS[g]; if(j && j.time1 && j.time2) return true; }
+  for(let g=73;g<=88;g++){ const j=JOGOS[g]; if(j&&j.time1&&j.time2) return true; }
   return false;
 }
 function escolher(g,team){
   if(LOCKED||!team) return;
-  PICKS[g]=team;
-  cascata();
-  render();
-  agendarSave();
+  PICKS[g]=team; cascata(); render(); agendarSave();
 }
 function cascata(){
-  const ordem=[89,90,91,92,93,94,95,96,97,98,99,100,101,102,104];
-  ordem.forEach(g=>{
-    if(PICKS[g]){
-      const c=candidatos(g).filter(Boolean);
-      if(c.indexOf(PICKS[g])===-1) delete PICKS[g];
-    }
+  [89,90,91,92,93,94,95,96,97,98,99,100,101,102,104].forEach(g=>{
+    if(PICKS[g]){ const c=candidatos(g).filter(Boolean); if(c.indexOf(PICKS[g])===-1) delete PICKS[g]; }
   });
 }
-function notaJogo(g){
-  if(LOCKED && FORFEIT.has(g)) return ' <span style="color:#ff9a9a">· não contou (você entrou depois)</span>';
-  if(!LOCKED && INICIADOS.has(g)) return ' <span style="color:#ffd36b">· ⚠ já começou, não pontua p/ você</span>';
-  return '';
-}
-function teamBtn(g,team){
-  if(!team) return '<button class="team empty">Defina a fase anterior</button>';
-  const sel=PICKS[g]===team;
-  const cls='team'+(sel?' sel':(PICKS[g]?' dim':''));
+
+/* ---- render ---- */
+function teamRow(g,team){
+  if(!team) return '<div class="team empty"><span class="flag">🐾</span><span class="team-name">Aguardando</span><span class="chevron">›</span></div>';
+  const sel=PICKS[g]===team, real=REAL[g]&&REAL[g]===team;
+  const cls='team'+(sel?' selected':'')+(real?' real':'');
   const oc=LOCKED?'':`onclick="escolher(${g},'${esc(team)}')"`;
-  return `<button class="${cls}" ${oc}>${sel?'✓ ':''}${team}</button>`;
+  return `<div class="${cls}" ${oc}><span class="flag">${flagImg(team)}</span><span class="team-name">${curto(team)}</span><span class="chevron">›</span></div>`;
+}
+function mcard(g){
+  const [a,b]=candidatos(g);
+  let badge='', st='';
+  if(REAL[g]){
+    if(PICKS[g]){
+      if(FORFEIT.has(g)){ st='naoconta'; }
+      else if(PICKS[g]===REAL[g]){ st='hit'; badge='<div class="bdg ok">✓</div>'; }
+      else { st='miss'; badge='<div class="bdg no">✗</div>'; }
+    }
+  } else if(!LOCKED && INICIADOS.has(g)){ badge='<div class="bdg wait">⏱</div>'; }
+  let chip='';
+  if(REAL[g]){ chip=`<div class="result-chip">Passou: ${flagImg(REAL[g])} ${curto(REAL[g])}</div>`; }
+  return `<div class="match-card ${LOCKED?'locked':''} ${st}">${badge}<div class="match-slot">Jogo ${g}</div>${teamRow(g,a)}${teamRow(g,b)}${chip}</div>`;
+}
+function colunas(arr){
+  let h='';
+  arr.forEach(c=>{
+    let s=''; c.g.forEach(g=> s+=mcard(g));
+    h+=`<div class="round-column"><h3>🐾 ${c.h}</h3><div class="round-stack">${s}</div></div>`;
+  });
+  return h;
 }
 function render(){
-  const el=document.getElementById('bracket');
   if(!temConfrontos()){
-    el.innerHTML='';
-    show('aguardando'); hide('acoes');
+    document.getElementById('bracket').innerHTML='';
+    show('aguardando'); hide('acoes'); hide('brkhint'); hide('legenda');
+    document.getElementById('resumo').innerHTML=''; document.getElementById('lockbar').innerHTML=''; document.getElementById('prog').textContent='';
     return;
   }
-  hide('aguardando');
-  let html='';
-  ROUNDS.forEach(r=>{
-    html+=`<div class="round"><h2>${r.nome}</h2></div>`;
-    r.jogos.forEach(g=>{
-      const [a,b]=candidatos(g);
-      html+=`<div class="match ${LOCKED?'locked':''}">
-        <div class="mt">Jogo ${g} · ${r.curto}${notaJogo(g)}</div>
-        ${teamBtn(g,a)}<div class="vs">— x —</div>${teamBtn(g,b)}
-      </div>`;
-    });
-  });
-  const [c1,c2]=candidatos(104);
-  html+=`<div class="round"><h2>Final — o Campeão</h2></div>`;
-  if(!c1||!c2){
-    html+=`<div class="champ"><div class="lbl">CAMPEÃO</div><div class="name none">complete as semifinais</div></div>`;
-  }else{
-    html+=`<div class="match ${LOCKED?'locked':''}"><div class="mt">Jogo 104 · Final${notaJogo(104)}</div>
-      ${teamBtn(104,c1)}<div class="vs">— x —</div>${teamBtn(104,c2)}</div>`;
-    if(PICKS[104]){
-      html+=`<div class="champ"><div class="lbl">🏆 SEU CAMPEÃO</div><div class="name">${PICKS[104]}</div></div>`;
-    }
+  hide('aguardando'); show('brkhint'); show('legenda');
+
+  let champ;
+  if(PICKS[104]) champ=`<div class="team selected"><span class="flag">${flagImg(PICKS[104])}</span><span class="team-name">${curto(PICKS[104])}</span><span class="chevron">★</span></div>`;
+  else champ='<div class="paw">🐾</div>';
+  const center=`<div class="center-stage"><h3>Final</h3>${mcard(104)}<div class="champion-box"><div class="champion-title">Campeão</div>${champ}</div></div>`;
+
+  document.getElementById('bracket').innerHTML =
+    `<div class="bwrap"><div class="bracket-grid">
+       <div class="side left-side">${colunas(LEFTCOLS)}</div>
+       ${center}
+       <div class="side right-side">${colunas(RIGHTCOLS)}</div>
+     </div></div>`;
+
+  // placar de acertos
+  let dec=0,hit=0;
+  SLOTS.forEach(s=>{ if(REAL[s] && !FORFEIT.has(s)){ dec++; if(PICKS[s] && PICKS[s]===REAL[s]) hit++; } });
+  const rz=document.getElementById('resumo');
+  if(dec>0){
+    rz.innerHTML=`<div class="score"><div class="big">${hit}</div><div><div class="lbl">acertos</div><div class="hint">em ${dec} jogo${dec>1?'s':''} já decidido${dec>1?'s':''} · veja os ✓ e ✗ no quadro</div></div></div>`;
+  } else {
+    rz.innerHTML=`<div class="score"><div style="font-size:30px">⏳</div><div><div class="lbl">aguardando os jogos</div><div class="hint">conforme cada jogo termina, seu acerto aparece aqui e na chave</div></div></div>`;
   }
-  el.innerHTML=html;
 
   const feitas=SLOTS.filter(s=>PICKS[s]).length;
   const prog=document.getElementById('prog');
-  if(LOCKED){ prog.textContent='🔒 Chave confirmada e travada — visualização apenas'; }
-  else if(feitas>=31){ prog.textContent='✅ Chave completa! Pode confirmar.'; }
-  else { prog.textContent='Faltam '+(31-feitas)+' escolha'+((31-feitas)>1?'s':''); }
+  if(LOCKED) prog.textContent='🔒 Chave confirmada e travada';
+  else if(feitas>=31) prog.textContent='✅ Chave completa! Pode confirmar.';
+  else prog.textContent='Faltam '+(31-feitas)+' escolha'+((31-feitas)>1?'s':'');
 
   document.getElementById('acoes').style.display = LOCKED?'none':'block';
   const bs=document.getElementById('btnSalvar');
-  if(bs){ bs.disabled = feitas<31; bs.textContent = feitas>=31 ? 'Confirmar e travar minha chave 🏆' : 'Complete a chave para confirmar'; }
+  if(bs){ bs.disabled=feitas<31; bs.textContent=feitas>=31?'Confirmar e travar minha chave 🏆':'Complete a chave para confirmar'; }
 
-  // barra de aviso
   let bar='';
-  if(LOCKED){
-    bar='<div class="lockbar">🔒 Sua chave está confirmada e travada.</div>';
-  } else if(INICIADOS.size>0){
-    bar='<div class="lockbar">⏱️ Você está montando depois do início. Os '+INICIADOS.size+' jogo(s) que já começaram <b>não vão pontuar</b> pra você — mas dá pra ganhar medalha com o resto! Quando terminar, toque em <b>Confirmar</b>.</div>';
-  }
-  document.getElementById('lockbar').innerHTML = bar;
+  if(LOCKED) bar='<div class="lockbar">🔒 Sua chave está confirmada e travada.</div>';
+  else if(INICIADOS.size>0) bar='<div class="lockbar">⏱️ Você está montando depois do início. Os '+INICIADOS.size+' jogo(s) marcados com ⏱ <b>não pontuam</b> pra você — mas dá pra ganhar medalha com o resto! Ao terminar, toque em <b>Confirmar</b>.</div>';
+  document.getElementById('lockbar').innerHTML=bar;
 }
-
 function renderMedalha(tier){
-  const img=document.getElementById('medImg'), nm=document.getElementById('medName'), ds=document.getElementById('medDesc');
-  const map={bronze:['medalha-pickem-bronze.png','Bronze','tier-bronze'],
-             prata:['medalha-pickem-prata.png','Prata','tier-prata'],
-             ouro:['medalha-pickem-ouro.png','Ouro','tier-ouro'],
-             platina:['medalha-pickem-platina.png','Platina','tier-platina']};
-  if(tier&&map[tier]){
-    img.src=map[tier][0]; img.style.display='block';
-    nm.textContent=map[tier][1]; nm.className='tiername '+map[tier][2];
-    ds.textContent='Sua medalha atual. Ela sobe sozinha se você acertar mais.';
-  }else{
-    img.style.display='none';
-    nm.textContent='Sem medalha ainda'; nm.className='tiername';
-    ds.textContent='Confirme sua chave completa para garantir o Bronze.';
-  }
+  const img=document.getElementById('medImg'),nm=document.getElementById('medName'),ds=document.getElementById('medDesc');
+  const map={bronze:['medalha-pickem-bronze.png','Bronze','tier-bronze'],prata:['medalha-pickem-prata.png','Prata','tier-prata'],ouro:['medalha-pickem-ouro.png','Ouro','tier-ouro'],platina:['medalha-pickem-platina.png','Platina','tier-platina']};
+  if(tier&&map[tier]){ img.src=map[tier][0]; img.style.display='block'; nm.textContent=map[tier][1]; nm.className='tiername '+map[tier][2]; ds.textContent='Sua medalha atual. Ela sobe sozinha se você acertar mais.'; }
+  else{ img.style.display='none'; nm.textContent='Sem medalha ainda'; nm.className='tiername'; ds.textContent='Confirme sua chave completa para garantir o Bronze.'; }
 }
 
-/* ---------- salvar ---------- */
+/* ---- salvar ---- */
 function agendarSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>salvar(true,false),700); }
-async function salvar(silent, commit){
+async function salvar(silent,commit){
   const res=await api({action:'pickemSave',nome:NOME,pin:PIN,picks:PICKS,commit:commit===true});
-  if(res.ok){
-    renderMedalha(res.medalha);
+  if(res.ok){ renderMedalha(res.medalha);
     if(res.confirmado){ LOCKED=true; FORFEIT=new Set(res.forfeit||[]); render(); }
     if(!silent) toast(res.confirmado?'Chave confirmada e travada! 🏆':'Salvo');
   } else if(res.erro==='travado'){ LOCKED=true; render(); toast('Sua chave já está travada'); }
@@ -359,7 +376,7 @@ async function salvar(silent, commit){
 function confirmar(){
   if(LOCKED) return;
   const aviso = INICIADOS.size>0
-    ? 'Confirmar TRAVA sua chave (não dá mais pra mexer).\nOs '+INICIADOS.size+' jogo(s) que já começaram não vão pontuar pra você.\n\nConfirmar mesmo assim?'
+    ? 'Confirmar TRAVA sua chave (não dá mais pra mexer).\nOs '+INICIADOS.size+' jogo(s) que já começaram não pontuam pra você.\n\nConfirmar mesmo assim?'
     : 'Confirmar TRAVA sua chave e não dá mais pra mexer. Confirmar?';
   if(!confirm(aviso)) return;
   salvar(false,true);
@@ -370,35 +387,32 @@ function recomecar(){
   PICKS={}; render(); agendarSave();
 }
 
-/* ---------- slides ---------- */
+/* ---- slides ---- */
 let slideIdx=0;
 const SLIDES=[
-  {img:'pickem-banner.png',h:"Pick'Em da Copa",p:"O Caminho do Campeão. Aqui você monta a chave INTEIRA do mata-mata e tenta adivinhar quem vai longe."},
-  {h:"Você escolhe quem avança",p:"Dos 16 avos até o campeão: 31 escolhas no total. Em cada confronto, toque no time que você acha que passa de fase."},
-  {h:"Não é placar",p:"Esquece o 2x1. Aqui é só QUEM PASSA. Simples assim — vai clicando e a chave se monta sozinha até a final."},
-  {h:"Trava quando começar",p:"Você pode mexer à vontade até a fase começar (28/06). Depois disso a chave fecha e vira só pra ver."},
-  {h:"É secreta 🔒",p:"Ninguém vê os seus palpites. A única coisa pública é a sua MEDALHA — então capricha."},
-  {medals:true,h:"Quatro medalhas",p:"Bronze: confirmar a chave. Prata: 12+ acertos. Ouro: 18+. Platina: 23+ e o campeão certo. A medalha sobe sozinha conforme os jogos rolam."},
-  {h:"Bora montar? 🏆",p:"Sua chave te espera. Toque em 'Começar' e construa o caminho do seu campeão."}
+  {img:'pickem-banner.png',h:"Pick'Em da Copa",p:"O Caminho do Campeão. Monte a chave INTEIRA do mata-mata e tente adivinhar quem vai longe."},
+  {h:"Toque pra avançar",p:"Em cada confronto, toque na seleção que você acha que passa de fase. Ela sobe sozinha pro próximo jogo na chave."},
+  {h:"Não é placar",p:"Aqui é só QUEM PASSA. Vá montando dos 16 avos até o campeão no meio do quadro."},
+  {h:"Acompanhe seus acertos",p:"Conforme os jogos terminam, o quadro mostra ✓ no que você acertou, ✗ no que errou, e quem passou de verdade."},
+  {h:"É secreta 🔒",p:"Ninguém vê seus palpites. Só a sua MEDALHA é pública."},
+  {medals:true,h:"Quatro medalhas",p:"Bronze: confirmar. Prata: 12+ acertos. Ouro: 18+. Platina: 23+ e o campeão certo."},
+  {h:"Bora montar? 🏆",p:"Deslize a chave pros lados e construa o caminho do seu campeão."}
 ];
 function iniciarSlides(){ slideIdx=0; document.getElementById('ovl').classList.add('on'); pintarSlide(); }
 function pintarSlide(){
-  const s=SLIDES[slideIdx];
-  let body='';
-  if(s.img) body+=`<img src="${s.img}" style="max-width:340px" alt="">`;
-  if(s.medals) body+=`<div class="medrow">
-    <img src="medalha-pickem-bronze.png"><img src="medalha-pickem-prata.png">
-    <img src="medalha-pickem-ouro.png"><img src="medalha-pickem-platina.png"></div>`;
-  body+=`<h2>${s.h}</h2><p>${s.p}</p>`;
-  document.getElementById('slideBody').innerHTML=body;
-  let dots=''; SLIDES.forEach((_,i)=>dots+=`<div class="dot ${i===slideIdx?'on':''}"></div>`);
-  document.getElementById('dots').innerHTML=dots;
-  document.getElementById('slideNext').textContent = slideIdx===SLIDES.length-1 ? 'Começar' : 'Próximo';
+  const s=SLIDES[slideIdx]; let b='';
+  if(s.img) b+=`<img src="${s.img}" style="max-width:340px" alt="">`;
+  if(s.medals) b+=`<div class="medrow"><img src="medalha-pickem-bronze.png"><img src="medalha-pickem-prata.png"><img src="medalha-pickem-ouro.png"><img src="medalha-pickem-platina.png"></div>`;
+  b+=`<h2>${s.h}</h2><p>${s.p}</p>`;
+  document.getElementById('slideBody').innerHTML=b;
+  let d=''; SLIDES.forEach((_,i)=>d+=`<div class="dot ${i===slideIdx?'on':''}"></div>`);
+  document.getElementById('dots').innerHTML=d;
+  document.getElementById('slideNext').textContent = slideIdx===SLIDES.length-1?'Começar':'Próximo';
 }
 function proxSlide(){ if(slideIdx<SLIDES.length-1){ slideIdx++; pintarSlide(); } else pularSlides(); }
 function pularSlides(){ localStorage.setItem('viu_intro_pickem','1'); document.getElementById('ovl').classList.remove('on'); }
 
-/* ---------- util ---------- */
+/* ---- util ---- */
 function show(id){document.getElementById(id).style.display='block'}
 function hide(id){document.getElementById(id).style.display='none'}
 function esc(s){return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;')}
